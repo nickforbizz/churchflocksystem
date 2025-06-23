@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-class StoreProductCategoryRequest extends FormRequest
+class GroupRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,9 @@ class StoreProductCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:2|unique:product_categories,name',
+            'name' => 'required|min:2|max:255',
+            'active' => 'boolean',
+            'created_by' => 'required|exists:users,id',
         ];
     }
 
@@ -42,7 +44,6 @@ class StoreProductCategoryRequest extends FormRequest
     public function passedValidation()
     {
         $this->merge([
-            'slug' => Str::slug($this->input('name')),
             'created_by' => Auth::id()
         ]);
     }

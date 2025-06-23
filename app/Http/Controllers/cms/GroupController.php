@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\cms;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MemberRequest;
-use App\Models\Member;
 use App\Models\Group;
+use App\Http\Requests\GroupRequest;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Cache;
 
-class MemberController extends Controller
+class GroupController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +17,8 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         // return datatable of the makes available
-        $data = Cache::remember('Member_all', 60, function () {
-            return Member::orderBy('created_at', 'desc')->get();
+        $data = Cache::remember('Group_all', 60, function () {
+            return Group::orderBy('created_at', 'desc')->get();
         });
         if ($request->ajax()) {
             return Datatables::of($data)
@@ -31,7 +30,7 @@ class MemberController extends Controller
                     $btn_edit = $btn_del = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
                         $btn_edit = '<a data-toggle="tooltip" 
-                                        href="' . route('members.edit', $row->id) . '" 
+                                        href="' . route('groups.edit', $row->id) . '" 
                                         class="btn btn-link btn-primary btn-lg" 
                                         data-original-title="Edit Record">
                                     <i class="fa fa-edit"></i>
@@ -43,7 +42,7 @@ class MemberController extends Controller
                                     data-toggle="tooltip" 
                                     title="" 
                                     class="btn btn-link btn-danger" 
-                                    onclick="delRecord(`' . $row->id . '`, `' . route('members.destroy', $row->id) . '`, `#tb_members`)"
+                                    onclick="delRecord(`' . $row->id . '`, `' . route('groups.destroy', $row->id) . '`, `#tb_groups`)"
                                     data-original-title="Remove">
                                 <i class="fa fa-times"></i>
                             </button>';
@@ -55,7 +54,7 @@ class MemberController extends Controller
         }
 
         // render view
-        return view('cms.members.index');
+        return view('cms.groups.index');
     }
 
     /**
@@ -63,58 +62,57 @@ class MemberController extends Controller
      */
     public function create()
     {
-        $groups = Group::where('active', 1)->get()->pluck('name', 'id');
-        return view('cms.members.create', compact('groups'));
+        return view('cms.groups.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(MemberRequest $request)
+    public function store(GroupRequest $request)
     {
         dd($request->all());
         // Validate the request data
         $request->validated();
-        Member::create($request->all());
+        Group::create($request->all());
         return redirect()->back()->with('success', 'Record Created Successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Member $member)
+    public function show(Group $group)
     {
         return response()
-            ->json($member, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+            ->json($group, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Member $member)
+    public function edit(Group $group)
     {
-        return view('cms.members.create', compact('member'));
+        return view('cms.groups.create', compact('group'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMemberRequest $request, Member $member)
+    public function update(GroupRequest $request, Group $group)
     {
-        $member->update($request->all());
+        $group->update($request->all());
 
         // Redirect the user to the user's profile page
         return redirect()
-            ->route('members.index')
+            ->route('groups.index')
             ->with('success', 'Record updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Member $member)
+    public function destroy(group $group)
     {
-        if ($member->delete()) {
+        if ($group->delete()) {
             return response()->json([
                 'code' => 1,
                 'msg' => 'Record deleted successfully'
