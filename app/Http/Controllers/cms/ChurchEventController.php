@@ -1,0 +1,183 @@
+<?php
+
+namespace App\Http\Controllers\cms;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ChurchEventRequest;
+use App\Models\Event as ChurchEvent;
+use Illuminate\Http\Request;
+use DataTables;
+use Illuminate\Support\Facades\Cache;
+
+class ChurchEventController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        // return datatable of the makes available
+        $data = Cache::remember('ChurchEvent_all', 60, function () {
+            return ChurchEvent::orderBy('created_at', 'desc')->get();
+        });
+        if ($request->ajax()) {
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($row) {
+                    return date_format($row->created_at, 'Y/m/d H:i');
+                })
+                ->editColumn('created_by', function ($row) {
+                    return $row->user->name ?? 'N/A';
+                })
+                ->addColumn('action', function ($row) {
+                    $btn_edit = $btn_del = null;
+                    if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
+                        $btn_edit = '<a data-toggle="tooltip" 
+                                        href="' . route('events.edit', $row->id) . '" 
+                                        class="btn btn-link btn-primary btn-lg" 
+                                        data-original-title="Edit Record">
+                                    <i class="fa fa-edit"></i>
+                                </a>';
+                    }
+
+                    if (auth()->user()->hasRole('superadmin')) {
+                        $btn_del = '<button type="button" 
+                                    data-toggle="tooltip" 
+                                    title="" 
+                                    class="btn btn-link btn-danger" 
+                                    onclick="delRecord(`' . $row->id . '`, `' . route('events.destroy', $row->id) . '`, `#tb_events`)"
+                                    data-original-title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>';
+                    }
+                    return $btn_edit . $btn_del;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        // render view
+        return view('cms.events.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        
+
+        // Check if the user has permission to create ChurchEvent
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create event'))) {
+            return redirect()->route('events.index')->with('error', 'You do not have permission to create events.');
+        }
+
+        // updat the cache for ChurchEvent
+        Cache::forget('ChurchEvent_all');
+
+        
+
+
+        return view('cms.events.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(ChurchEventRequest $request)
+    {
+
+        // Validate the request data
+        if (!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create member')) {
+            return redirect()->route('events.index')->with('error', 'You do not have permission to create events.');
+        }
+
+        if(!ChurchEvent::create($request->validated())){
+            // If the record creation fails, redirect back with an error message that caused the failure
+            // You can also log the error or handle it as needed
+            \Log::error('Failed to create ChurchEvent record', [
+                'user_id' => auth()->id(),
+                'data' => $request->all()
+            ]);
+            return redirect()->back()->with('error', 'Failed to create record. Please try again.');
+        }
+
+        return redirect()->back()->with('success', 'Record Created Successfully');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(ChurchEvent $churchEvent)
+    {
+        return response()
+            ->json($churchEvent, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(ChurchEvent $event)
+    {
+
+        $churchEvent = $event;
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit event'))) {
+            return redirect()->route('events.index')->with('error', 'You do not have permission to edit events.');
+        }
+        
+
+        return view('cms.events.create', compact('churchEvent'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(ChurchEventRequest $request, ChurchEvent $event)
+    {
+        // Check if the user has permission to update events
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit event'))) {
+            return redirect()->route('events.index')->with('error', 'You do not have permission to update events.');
+        }
+
+        if(!$event->update($request->validated())){
+            return redirect()->back()->with('error', 'Failed to update record. Please try again.');
+        }
+
+        // Clear the cache for ChurchEvent
+        Cache::forget('ChurchEvent_all');
+
+              
+
+        // Redirect the user to the user's profile page
+        return redirect()
+            ->route('events.index')
+            ->with('success', 'Record updated successfully!');
+    }
+
+
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(ChurchEvent $event)
+    {
+        // Check if the user has permission to delete events
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('delete event'))) {
+            return response()->json([
+                'code' => -1,
+                'msg' => 'You do not have permission to delete events.'
+            ], 403, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
+        if ($event->delete()) {
+            return response()->json([
+                'code' => 1,
+                'msg' => 'Record deleted successfully'
+            ], 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
+
+        return response()->json([
+            'code' => -1,
+            'msg' => 'Record did not delete'
+        ], 422, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+    }
+}
