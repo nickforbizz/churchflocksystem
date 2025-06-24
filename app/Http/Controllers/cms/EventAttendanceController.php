@@ -32,6 +32,13 @@ class EventAttendanceController extends Controller
 
                     return date_format($row->created_at, 'Y/m/d H:i');
                 })
+                ->editColumn('attendance_date', function ($row) {
+                    if (is_null($row->attendance_date)) {
+                        return 'N/A';
+                    }
+
+                    return date_format($row->attendance_date, 'Y/m/d');
+                })
                 ->editColumn('member_id', function ($row) {
                     return $row->member->full_name ?? 'N/A';
                 })
@@ -113,17 +120,32 @@ class EventAttendanceController extends Controller
      */
     public function store(EventAttendanceRequest $request)
     {
+        // dd($request->validated());
         // Validate the request data
         if (!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create event_attendance')) {
             return redirect()->route('eventAttendance.index')->with('error', 'You do not have permission to create eventAttendance.');
         }
 
+        $attendance = EventAttendance::create($request->validated());
 
-        if(!EventAttendance::create($request->validated())){
+
+        if (!$attendance) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Failed to create record. Please try again.'], 500);
+            }
             return redirect()->back()->with('error', 'Failed to create record. Please try again.');
         }
 
-        return redirect()->back()->with('success', 'Record Created Successfully');
+        // Clear cache
+        Cache::forget('EventAttendance_all');
+
+        if ($request->ajax()) {
+            // Eager load for the response
+            $attendance->load(['member', 'user']);
+            return response()->json(['success' => true, 'message' => 'Attendance recorded successfully.', 'data' => $attendance]);
+        }
+
+        return redirect()->route('eventAttendance.index')->with('success', 'Record Created Successfully');
     }
 
     /**
@@ -196,6 +218,14 @@ class EventAttendanceController extends Controller
      */
     public function destroy(EventAttendance $eventAttendance)
     {
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('delete event_attendance'))) {
+            return response()->json([
+                'code' => -1,
+                'msg' => 'You do not have permission to delete events.'
+            ], 403, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
+
+
         if ($eventAttendance->delete()) {
             return response()->json([
                 'code' => 1,

@@ -188,6 +188,15 @@ class MemberController extends Controller
      */
     public function destroy(Member $member)
     {
+
+        // check permissions
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('delete member'))) {
+            return response()->json([
+                'code' => -1,
+                'msg' => 'You do not have permission to delete members.'
+            ], 403, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
+
         if ($member->delete()) {
             return response()->json([
                 'code' => 1,

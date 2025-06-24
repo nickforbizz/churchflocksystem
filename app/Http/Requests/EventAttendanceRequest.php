@@ -29,10 +29,10 @@ class EventAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'member_id' => 'required', 'exists:members,id',
+            'member_id' => ['required', 'exists:members,id'],
             'event_id' => 'required|exists:events,id',
             'attendance_date' => 'required|date',
-            'attendance_time' => 'required|date_format:H:i',
+            'attendance_time' => 'nullable',
             'notes' => 'nullable|string|max:500',
             'status' => ['required', Rule::in(['present', 'absent', 'excused'])],
             'attendance_type' => ['required', Rule::in(['in-person', 'online'])],
@@ -52,17 +52,14 @@ class EventAttendanceRequest extends FormRequest
 
     public function prepareForValidation()
     {
+        // pick current date-time for attendance_time
+        $attendance_time = date('Y-m-d H:i:s');
+
         // This sets variables before validation occurs.
         $this->merge([
-            'created_by' => Auth::id()
+            'created_by' => Auth::id(),
+            'attendance_time' => $attendance_time
         ]);
     }
 
-
-    public function passedValidation()
-    {
-        $this->merge([
-            'created_by' => Auth::id()
-        ]);
-    }
 }

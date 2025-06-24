@@ -42,7 +42,7 @@ class ChurchEventController extends Controller
                     return $row->user->name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn_edit = $btn_del = null;
+                    $btn_edit = $btn_del = $btn_view = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
                         $btn_edit = '<a data-toggle="tooltip" 
                                         href="' . route('events.edit', $row->id) . '" 
@@ -62,7 +62,16 @@ class ChurchEventController extends Controller
                                 <i class="fa fa-times"></i>
                             </button>';
                     }
-                    return $btn_edit . $btn_del;
+
+                    $btn_view = '<a data-toggle="tooltip" 
+                                    href="' . route('events.show', $row->id) . '" 
+                                    class="btn btn-link btn-success btn-lg" 
+                                    data-original-title="View Record">
+                                <i class="fa fa-eye"></i>
+                            </a>';
+
+
+                    return $btn_edit . $btn_view . $btn_del;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -98,32 +107,43 @@ class ChurchEventController extends Controller
      */
     public function store(ChurchEventRequest $request)
     {
+        
 
         // Validate the request data
-        if (!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create member')) {
+        if (!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create event')) {
             return redirect()->route('events.index')->with('error', 'You do not have permission to create events.');
         }
 
         if (!ChurchEvent::create($request->validated())) {
-            // If the record creation fails, redirect back with an error message that caused the failure
-            // You can also log the error or handle it as needed
-            \Log::error('Failed to create ChurchEvent record', [
-                'user_id' => auth()->id(),
-                'data' => $request->all()
-            ]);
             return redirect()->back()->with('error', 'Failed to create record. Please try again.');
         }
 
-        return redirect()->back()->with('success', 'Record Created Successfully');
+        // Clear the cache for ChurchEvent after creation
+        Cache::forget('ChurchEvent_all');
+
+        return redirect()->route('events.index')->with('success', 'Record Created Successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(ChurchEvent $event)
+    public function show(Request $request, ChurchEvent $event)
     {
-        return response()
-            ->json($event, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        // Eager load relationships for both JSON and view responses
+        $event->load(['user', 'event_attendances.member', 'event_attendances.user']);
+
+        // Handle AJAX requests (e.g., from the calendar modal)
+        if ($request->wantsJson()) {
+            return response()->json($event);
+        }
+
+        // For the full view page, get members who are not yet in attendance for this event
+        $attendingMemberIds = $event->event_attendances->pluck('member_id')->all();
+        $members = \App\Models\Member::where('active', 1)
+                         ->whereNotIn('id', $attendingMemberIds)
+                         ->get(['id', 'full_name']);
+
+        return view('cms.events.view', compact('event', 'members'));
     }
 
     /**
@@ -180,6 +200,8 @@ class ChurchEventController extends Controller
                 'msg' => 'You do not have permission to delete events.'
             ], 403, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
         }
+
+        
         if ($event->delete()) {
             return response()->json([
                 'code' => 1,
