@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ChurchEventRequest;
 use App\Models\Event as ChurchEvent;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use DataTables;
 use Illuminate\Support\Facades\Cache;
 
@@ -24,7 +25,18 @@ class ChurchEventController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($row) {
+                    if (is_null($row->created_at)) {
+                        return 'N/A';
+                    }
+
                     return date_format($row->created_at, 'Y/m/d H:i');
+                })
+                ->editColumn('event_date', function ($row) {
+                    // check if event_date is null
+                    if (is_null($row->event_date)) {
+                        return 'N/A';
+                    }
+                    return date_format($row->event_date, 'Y/m/d');
                 })
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
@@ -65,7 +77,7 @@ class ChurchEventController extends Controller
      */
     public function create()
     {
-        
+
 
         // Check if the user has permission to create ChurchEvent
         if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create event'))) {
@@ -75,7 +87,7 @@ class ChurchEventController extends Controller
         // updat the cache for ChurchEvent
         Cache::forget('ChurchEvent_all');
 
-        
+
 
 
         return view('cms.events.create');
@@ -92,7 +104,7 @@ class ChurchEventController extends Controller
             return redirect()->route('events.index')->with('error', 'You do not have permission to create events.');
         }
 
-        if(!ChurchEvent::create($request->validated())){
+        if (!ChurchEvent::create($request->validated())) {
             // If the record creation fails, redirect back with an error message that caused the failure
             // You can also log the error or handle it as needed
             \Log::error('Failed to create ChurchEvent record', [
@@ -108,10 +120,10 @@ class ChurchEventController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ChurchEvent $churchEvent)
+    public function show(ChurchEvent $event)
     {
         return response()
-            ->json($churchEvent, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+            ->json($event, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
     }
 
     /**
@@ -124,7 +136,7 @@ class ChurchEventController extends Controller
         if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit event'))) {
             return redirect()->route('events.index')->with('error', 'You do not have permission to edit events.');
         }
-        
+
 
         return view('cms.events.create', compact('churchEvent'));
     }
@@ -139,14 +151,14 @@ class ChurchEventController extends Controller
             return redirect()->route('events.index')->with('error', 'You do not have permission to update events.');
         }
 
-        if(!$event->update($request->validated())){
+        if (!$event->update($request->validated())) {
             return redirect()->back()->with('error', 'Failed to update record. Please try again.');
         }
 
         // Clear the cache for ChurchEvent
         Cache::forget('ChurchEvent_all');
 
-              
+
 
         // Redirect the user to the user's profile page
         return redirect()
@@ -179,5 +191,39 @@ class ChurchEventController extends Controller
             'code' => -1,
             'msg' => 'Record did not delete'
         ], 422, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+    }
+
+
+
+
+    public function showCalendar()
+    {
+        $selectedYear = request()->get('year', Carbon::now()->year);
+        $currentYear = Carbon::now()->year;
+        // Generate a range of years, e.g., 5 years before and 5 years after the current year
+        $years = range($currentYear - 5, $currentYear + 5);
+
+        return view('cms.events.calender', compact('selectedYear', 'years'));
+    }
+
+    public function calendarEvents()
+    {
+        $year = request()->query('year', Carbon::now()->year);
+
+        $events = ChurchEvent::whereYear('event_date', $year)
+                         ->get()
+                         ->map(function ($event) {
+            return [
+                'id' => $event->id, // Add event ID for click handling
+                'title' => $event->title,
+                // check if event_date is null
+                'start' => $event->event_date ? $event->event_date->toDateString() : null, // Use null for FullCalendar if date is N/A
+                'description' => $event->description,
+                'location' => $event->location,
+                'created_by' => $event->user->name ?? 'N/A',
+            ];
+        });
+
+        return response()->json($events);
     }
 }

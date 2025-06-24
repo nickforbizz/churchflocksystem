@@ -30,14 +30,23 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex ">
                         <h4 class="card-title">List of Available Record(s)</h4>
-                        @can('create event')
-                        <a href="{{ route('events.create') }}" class="btn btn-primary btn-round ml-auto" >
-                            <i class="flaticon-add mr-2"></i>
-                            Add Row
-                        </a> 
-                        @endcan
+
+                        <div class="ml-auto">
+                            <a href="{{ route('calendar') }}" class="btn btn-info btn-round " >
+                                <i class="flaticon-add mr-2"></i>
+                                View Calender
+                            </a> 
+    
+                            @can('create event')
+                            <a href="{{ route('events.create') }}" class="btn btn-primary btn-round ml-auto" >
+                                <i class="flaticon-add mr-2"></i>
+                                Add Row
+                            </a> 
+                            @endcan
+
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -50,6 +59,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Title</th>
+                                    <th>Event Date</th>
                                     <th>Description</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
@@ -83,6 +93,9 @@
                 },
                 {
                     data: 'title'
+                },
+                {
+                    data: 'event_date'
                 },
                 {
                     data: 'description'

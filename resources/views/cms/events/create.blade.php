@@ -67,7 +67,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="event_date" class="placeholder"> Event Date </label>
-                                    <input id="event_date" type="date" class="form-control @error('event_date') is-invalid @enderror" name="event_date" value="{{ old('event_date', isset($member->event_date) ? $member->event_date->format('Y-m-d') : '') }}" required />
+                                    <input id="event_date" type="date" class="form-control @error('event_date') is-invalid @enderror" name="event_date" value="{{ old('event_date', isset($churchEvent->event_date) ? $churchEvent->event_date->format('Y-m-d') : '') }}" required />
                                     @error('event_date') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
