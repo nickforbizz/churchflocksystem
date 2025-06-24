@@ -15,7 +15,10 @@ class GroupRequest extends FormRequest
     public function authorize(): bool
     {
         $user = auth()->user();
-        return $user->hasAnyRole(['admin', 'superadmin']);
+        // return $user->hasAnyRole(['admin', 'superadmin']);
+        
+        // Only allow authenticated users to create groups
+        return Auth::check();
     }
 
     /**
@@ -38,6 +41,15 @@ class GroupRequest extends FormRequest
             'unique' => ':attribute is already used',
             'required' => 'The :attribute field is required.',
         ];
+    }
+
+
+    public function prepareForValidation()
+    {
+        // This sets variables before validation occurs.
+        $this->merge([
+            'created_by' => Auth::id()
+        ]);
     }
 
 

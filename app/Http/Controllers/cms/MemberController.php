@@ -27,6 +27,9 @@ class MemberController extends Controller
                 ->editColumn('created_at', function ($row) {
                     return date_format($row->created_at, 'Y/m/d H:i');
                 })
+                ->editColumn('created_by', function ($row) {
+                    return $row->user->name ?? 'N/A';
+                })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {

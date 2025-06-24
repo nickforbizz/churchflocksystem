@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Http\Requests\GroupRequest;
 use Illuminate\Http\Request;
 use DataTables;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class GroupController extends Controller
@@ -25,6 +26,9 @@ class GroupController extends Controller
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($row) {
                     return date_format($row->created_at, 'Y/m/d H:i');
+                })
+                ->editColumn('created_by', function ($row) {
+                    return $row->user->name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
@@ -70,10 +74,9 @@ class GroupController extends Controller
      */
     public function store(GroupRequest $request)
     {
-        dd($request->all());
+        // dd($request->validated(), Auth::user()->can('create', Group::class));
         // Validate the request data
-        $request->validated();
-        Group::create($request->all());
+        Group::create($request->validated());
         return redirect()->back()->with('success', 'Record Created Successfully');
     }
 

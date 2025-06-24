@@ -30,14 +30,21 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex ">
                         <h4 class="card-title">List of Available Record(s)</h4>
-                        @can('create permissions')
-                        <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-round ml-auto" >
-                            <i class="flaticon-add mr-2"></i>
-                            Add Record
-                        </a> 
-                        @endcan
+                        <div class="ml-auto">
+                            </a> <a href="{{ route('flush-perms') }}" target="_blank" class="btn btn-danger btn-round ml-auto">
+                                <i class="flaticon-add mr-2"></i>
+                                Flush Permissions
+                            </a>
+                            @can('create permissions')
+                            <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-round ml-auto" >
+                                <i class="flaticon-add mr-2"></i>
+                                Add Record
+                            </a> 
+                            @endcan
+
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">

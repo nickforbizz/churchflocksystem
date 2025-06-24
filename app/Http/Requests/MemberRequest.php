@@ -54,6 +54,13 @@ class MemberRequest extends FormRequest
         ];
     }
 
+    public function prepareForValidation()
+    {
+        // This sets variables before validation occurs.
+        $this->merge([
+            'created_by' => Auth::id()
+        ]);
+    }
 
     public function passedValidation()
     {
