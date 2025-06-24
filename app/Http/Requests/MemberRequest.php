@@ -65,7 +65,6 @@ class MemberRequest extends FormRequest
     public function passedValidation()
     {
         $this->merge([
-            'slug' => Str::slug($this->input('name')),
             'created_by' => Auth::id()
         ]);
     }

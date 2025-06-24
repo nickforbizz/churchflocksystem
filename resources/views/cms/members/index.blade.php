@@ -96,7 +96,7 @@
                     data: 'email'
                 },
                 {
-                    data: 'phone'
+                    data: 'birth_date'
                 },
                 {
                     data: 'marital_status'
@@ -105,8 +105,7 @@
                     data: 'join_date'
                 },
                 {
-                    data: 'group_name',
-                    name: 'group.name'
+                    data: 'group_id',
                 },
                 {
                     data: 'created_by'
