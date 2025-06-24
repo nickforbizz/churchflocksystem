@@ -55,7 +55,22 @@
 				</li>
 				@endif
 
-				
+
+				<li class="nav-item @if(Route::is('groups.*')) active @endif">
+					<a href="{{ route('groups.index') }}">
+						<i class="far fa-clone"></i>
+						<p> Groups </p>
+					</a>
+				</li>
+
+
+				<li class="nav-item @if(Route::is('members.*')) active @endif">
+					<a href="{{ route('members.index') }}">
+						<i class="far fa-clone"></i>
+						<p> Members </p>
+					</a>
+				</li>
+
 
 				<li class="nav-item @if(Route::is('productCategories.*')) active @endif">
 					<a href="{{ route('productCategories.index') }}">
@@ -90,8 +105,8 @@
 					</a>
 					<div class="@if( Route::is('roles.*') || 
 								     Route::is('permissions.*') ||
-									 Route::is('notifications.*') ) collapsed @else collapse @endif" 
-									 id="submenu">
+									 Route::is('notifications.*') ) collapsed @else collapse @endif"
+						id="submenu">
 						<ul class="nav nav-collapse">
 							<li>
 								<a data-toggle="collapse" href="#subnav2">
