@@ -52,15 +52,14 @@
                         @csrf
                         @if(isset($group->id))
                         @method('PUT')
-                        <input type="hidden" name="created_by" value="{{ auth()->id() }}">
                         @endif
 
 
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="name" class="placeholder"> Name </label>
-                                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Enter Full Name" name="name" value="{{ $group->name ?? '' }}" required />
+                                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Enter Full Name" name="name" value="{{ old('name', $group->name ?? '') }}" required />
                                     @error('name') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -73,12 +72,12 @@
 
 
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="active"> Active </label>
-                                    <select name="active" id="active" class="form-control">
-                                        <option value="1" @if(isset($group->id)) {{ $group->active == '1' ? 'selected' : '' }} @endif> Yes </option>
-                                        <option value="0" @if(isset($group->id)) {{ $group->active == '0' ? 'selected' : '' }} @endif> In Active </option>
+                                    <select name="active" id="active" class="form-control @error('active') is-invalid @enderror">
+                                        <option value="1" {{ old('active', $group->active ?? '') == '1' ? 'selected' : '' }}> Yes </option>
+                                        <option value="0" {{ old('active', $group->active ?? '') == '0' ? 'selected' : '' }}> In Active </option>
                                     </select>
                                     @error('active') <span class="text-danger">{{ $message }}</span>
                                     @enderror
