@@ -231,12 +231,29 @@
 							}
 	
 						},
-						error: function(err) {
-							console.error(err);
+						error: function(jqXHR, textStatus, errorThrown) {
+							console.error("AJAX Error:", textStatus, errorThrown, jqXHR);
+							let errorMessage = 'An unexpected error occurred. Please try again.';
+							let errorIcon = 'error';
+
+							if (jqXHR.status) {
+								if (jqXHR.status === 500) {
+									errorMessage = 'Internal Server Error: Something went wrong on the server.';
+								} else if (jqXHR.status === 403) {
+									errorMessage = jqXHR.responseJSON && jqXHR.responseJSON.msg ? jqXHR.responseJSON.msg : 'You do not have permission to perform this action.';
+									errorIcon = 'warning';
+								} else if (jqXHR.status === 422) { // Unprocessable Entity, often for validation or specific business logic errors
+									errorMessage = jqXHR.responseJSON && jqXHR.responseJSON.msg ? jqXHR.responseJSON.msg : 'The request could not be processed.';
+									errorIcon = 'warning';
+								} else if (jqXHR.responseJSON && jqXHR.responseJSON.msg) {
+									errorMessage = jqXHR.responseJSON.msg;
+									errorIcon = 'warning';
+								}
+							}
 							Swal.fire({
-								icon: 'warning',
+								icon: errorIcon,
 								title: 'Record Response',
-								text: res.msg,
+								text: errorMessage,
 							});
 						}
 					});

@@ -2,6 +2,7 @@
 
 use App\Events\UserRegistered;
 use App\Http\Controllers\cms\AssignRoleController;
+use App\Http\Controllers\cms\ChurchEventController;
 use App\Http\Controllers\cms\GroupController;
 use App\Http\Controllers\cms\MemberController;
 use App\Http\Controllers\cms\NotificationController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\cms\RoleController;
 use App\Http\Controllers\cms\SearchController;
 use App\Http\Controllers\frontend\ViewsController;
 use App\Http\Controllers\HomeController;
+use App\Models\ChurchEvent;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -86,6 +88,8 @@ Route::middleware('cms')->group(function () {
     // Downloadable Reports
     Route::get('reports/download/csv', [ReportController::class, 'downloadCsv'])->name('reports.download.csv');
 
+    Route::get('/calendar', [ChurchEventController::class, 'showCalendar'])->name('calendar');
+    Route::get('/calendar/events', [ChurchEventController::class, 'calendarEvents'])->name('calendar.events');
 
 
     // Resources Routes
@@ -93,6 +97,7 @@ Route::middleware('cms')->group(function () {
         'users' => UserController::class,
         'members' => MemberController::class,
         'groups' => GroupController::class,
+        'events' => ChurchEventController::class,
 
 
         'posts' => PostController::class,

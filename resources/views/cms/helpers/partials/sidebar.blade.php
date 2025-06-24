@@ -72,6 +72,14 @@
 				</li>
 
 
+				<li class="nav-item @if(Route::is('events.*')) active @endif">
+					<a href="{{ route('events.index') }}">
+						<i class="far fa-clone"></i>
+						<p> Events </p>
+					</a>
+				</li>
+
+
 				<li class="nav-item @if(Route::is('productCategories.*')) active @endif">
 					<a href="{{ route('productCategories.index') }}">
 						<i class="far fa-clone"></i>

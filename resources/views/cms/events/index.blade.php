@@ -1,0 +1,126 @@
+@extends('layouts.cms')
+
+@section('content')
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title"> Events </h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="#">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#"> Events</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Index</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+   
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex ">
+                        <h4 class="card-title">List of Available Record(s)</h4>
+
+                        <div class="ml-auto">
+                            <a href="{{ route('calendar') }}" class="btn btn-info btn-round " >
+                                <i class="flaticon-add mr-2"></i>
+                                View Calender
+                            </a> 
+    
+                            @can('create event')
+                            <a href="{{ route('events.create') }}" class="btn btn-primary btn-round ml-auto" >
+                                <i class="flaticon-add mr-2"></i>
+                                Add Row
+                            </a> 
+                            @endcan
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                   
+
+                    <div class="table-responsive">
+                        @include('cms.helpers.partials.feedback')
+                        <table id="tb_events" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Event Date</th>
+                                    <th>Description</th>
+                                    <th>Created By</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- .page-inner -->
+
+@endsection
+
+
+@push('scripts')
+
+
+<script>
+    $(document).ready(function() {
+        $('#tb_events').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('events.index') }}",
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
+                },
+                {
+                    data: 'title'
+                },
+                {
+                    data: 'event_date'
+                },
+                {
+                    data: 'description'
+                },
+                {
+                    data: 'created_by'
+                },					
+                {
+                    data: 'created_at',
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: true,
+                    searchable: true
+                },
+            ]
+        });
+        // #tb_events
+
+       
+    });
+
+
+    
+</script>
+
+@endpush

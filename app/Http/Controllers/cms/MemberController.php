@@ -25,12 +25,24 @@ class MemberController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($row) {
+                    if (is_null($row->created_at)) {
+                        return 'N/A';
+                    }
+
                     return date_format($row->created_at, 'Y/m/d H:i');
                 })
                 ->editColumn('join_date', function ($row) {
+                    if (is_null($row->join_date)) {
+                        return 'N/A';
+                    }
+
                     return date_format($row->join_date, 'Y/m/d');
                 })
                 ->editColumn('birth_date', function ($row) {
+                    if (is_null($row->birth_date)) {
+                        return 'N/A';
+                    }
+
                     return date_format($row->birth_date, 'Y/m/d');
                 })
                 ->editColumn('group_id', function ($row) {
