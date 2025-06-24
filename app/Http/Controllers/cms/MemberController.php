@@ -27,6 +27,18 @@ class MemberController extends Controller
                 ->editColumn('created_at', function ($row) {
                     return date_format($row->created_at, 'Y/m/d H:i');
                 })
+                ->editColumn('join_date', function ($row) {
+                    return date_format($row->join_date, 'Y/m/d');
+                })
+                ->editColumn('birth_date', function ($row) {
+                    return date_format($row->birth_date, 'Y/m/d');
+                })
+                ->editColumn('group_id', function ($row) {
+                    return $row->group->name ?? 'N/A';
+                })
+                ->editColumn('created_by', function ($row) {
+                    return $row->user->name ?? 'N/A';
+                })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
@@ -63,7 +75,26 @@ class MemberController extends Controller
      */
     public function create()
     {
-        $groups = Group::where('active', 1)->get()->pluck('name', 'id');
+        // If you want to cache the groups, you can uncomment the next line
+        $groups = Cache::remember('Group_all', 60, function () {
+            return Group::where('active', 1)->get();
+        });
+
+        // Check if the user has permission to create members
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create member'))) {
+            return redirect()->route('members.index')->with('error', 'You do not have permission to create members.');
+        }
+
+        // updat the cache for Members
+        Cache::forget('Member_all');
+
+        // Render the create view with groups
+        if ($groups->isEmpty()) {
+            return redirect()->back()->with('error', 'No active groups found. Please create a group first.');
+        }
+
+
+
         return view('cms.members.create', compact('groups'));
     }
 
@@ -72,10 +103,16 @@ class MemberController extends Controller
      */
     public function store(MemberRequest $request)
     {
-        dd($request->all());
         // Validate the request data
-        $request->validated();
-        Member::create($request->all());
+        if (!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create member')) {
+            return redirect()->route('members.index')->with('error', 'You do not have permission to create members.');
+        }
+
+
+        if(!Member::create($request->validated())){
+            return redirect()->back()->with('error', 'Failed to create record. Please try again.');
+        }
+
         return redirect()->back()->with('success', 'Record Created Successfully');
     }
 
@@ -93,15 +130,40 @@ class MemberController extends Controller
      */
     public function edit(Member $member)
     {
-        return view('cms.members.create', compact('member'));
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit member'))) {
+            return redirect()->route('members.index')->with('error', 'You do not have permission to edit members.');
+        }
+        // Get groups from cache
+        $groups = Cache::remember('Group_all', 60, function () {
+            return Group::where('active', 1)->get();
+        });
+        return view('cms.members.create', compact('member', 'groups'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMemberRequest $request, Member $member)
+    public function update(MemberRequest $request, Member $member)
     {
-        $member->update($request->all());
+        // Check if the user has permission to update members
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit member'))) {
+            return redirect()->route('members.index')->with('error', 'You do not have permission to update members.');
+        }
+
+        if(!$member->update($request->validated())){
+            return redirect()->back()->with('error', 'Failed to update record. Please try again.');
+        }
+
+        // Clear the cache for members
+        Cache::forget('Member_all');
+
+        // Optionally, you can clear the cache for the specific member
+        Cache::forget('Member_' . $member->id);
+
+        // Optionally, you can clear the cache for the group if needed
+        Cache::forget('Group_' . $member->group_id);
+
+       
 
         // Redirect the user to the user's profile page
         return redirect()

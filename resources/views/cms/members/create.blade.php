@@ -72,7 +72,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="full_name" class="placeholder"> Full Name </label>
-                                    <input id="full_name" type="text" class="form-control @error('full_name') is-invalid @enderror" placeholder="Enter Full Name" name="full_name" value="{{ $member->full_name ?? '' }}" required />
+                                    <input id="full_name" type="text" class="form-control @error('full_name') is-invalid @enderror" placeholder="Enter Full Name" name="full_name" value="{{ old('full_name', $member->full_name ?? '') }}" required />
                                     @error('full_name') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -81,7 +81,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="email" class="placeholder"> Email </label>
-                                    <input id="email" type="text" class="form-control @error('email') is-invalid @enderror" placeholder="Enter Email" name="email" value="{{ $member->email ?? '' }}" required />
+                                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" placeholder="Enter Email" name="email" value="{{ old('email', $member->email ?? '') }}" required />
                                     @error('email') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -97,7 +97,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="phone" class="placeholder"> Phone </label>
-                                    <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror" placeholder="Enter Phone" name="phone" value="{{ $member->phone ?? '' }}" required />
+                                    <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror" placeholder="Enter Phone" name="phone" value="{{ old('phone', $member->phone ?? '') }}" required />
                                     @error('phone') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -106,7 +106,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="birth_date" class="placeholder"> Date of Birth </label>
-                                    <input id="birth_date" type="date" class="form-control @error('birth_date') is-invalid @enderror" name="birth_date" value="{{ $member->birth_date ?? '' }}" required />
+                                    <input id="birth_date" type="date" class="form-control @error('birth_date') is-invalid @enderror" name="birth_date" value="{{ old('birth_date', isset($member->birth_date) ? $member->birth_date->format('Y-m-d') : '') }}" required />
                                     @error('birth_date') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -121,7 +121,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="join_date" class="placeholder"> Join Date </label>
-                                    <input id="join_date" type="date" class="form-control @error('join_date') is-invalid @enderror" name="join_date" value="{{ $member->join_date ?? '' }}" required />
+                                    <input id="join_date" type="date" class="form-control @error('join_date') is-invalid @enderror" name="join_date" value="{{ old('join_date', isset($member->join_date) ? $member->join_date->format('Y-m-d') : '') }}" required />
                                     @error('join_date') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -130,10 +130,10 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="marital_status"> Marital Status </label>
-                                    <select name="marital_status" id="marital_status" class="form-control">
-                                        <option value="single" @if(isset($product->id)) {{ $product->marital_status == 'single' ? 'selected' : '' }} @endif> single </option>
-                                        <option value="married" @if(isset($product->id)) {{ $product->marital_status == 'married' ? 'selected' : '' }} @endif> Married </option>
-                                        <option value="other" @if(isset($product->id)) {{ $product->marital_status == 'other' ? 'selected' : '' }} @endif> Other </option>
+                                    <select name="marital_status" id="marital_status" class="form-control @error('marital_status') is-invalid @enderror">
+                                        <option value="single" {{ old('marital_status', $member->marital_status ?? '') == 'single' ? 'selected' : '' }}>Single</option>
+                                        <option value="married" {{ old('marital_status', $member->marital_status ?? '') == 'married' ? 'selected' : '' }}>Married</option>
+                                        <option value="other" {{ old('marital_status', $member->marital_status ?? '') == 'other' ? 'selected' : '' }}>Other</option>
                                     </select>
                                     @error('marital_status') <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -153,11 +153,12 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="group_id">Group</label>
-                                    <select name="group_id" id="group_id" class="form-control">
+                                    <select name="group_id" id="group_id" class="form-control @error('group_id') is-invalid @enderror">
+                                        <option value="">-- Select Group --</option>
                                         @forelse($groups as $group)
-                                        <option value="{{ $group->id }}" @if(isset($product->id)) {{ $group->id == $group->group_id ? 'selected' : '' }} @endif> {{ $group->name }} </option>
+                                        <option value="{{ $group->id }}" {{ old('group_id', $member->group_id ?? '') == $group->id ? 'selected' : '' }}> {{ $group->name }} </option>
                                         @empty
-                                        <option selected disabled> -- No item -- </option>
+                                        <option disabled> -- No groups available -- </option>
                                         @endforelse
                                     </select>
                                     @error('group_id') <span class="text-danger">{{ $message }}</span>

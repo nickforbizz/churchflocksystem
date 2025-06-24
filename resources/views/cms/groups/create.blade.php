@@ -3,7 +3,7 @@
 @section('content')
 <div class="page-inner">
     <div class="page-header">
-        <h4 class="page-title"> Members </h4>
+        <h4 class="page-title"> groups </h4>
         <ul class="breadcrumbs">
             <li class="nav-home">
                 <a href="#">
@@ -14,7 +14,7 @@
                 <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Members </a>
+                <a href="#">groups </a>
             </li>
             <li class="separator">
                 <i class="flaticon-right-arrow"></i>
@@ -32,7 +32,7 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">Add|Edit Record</h4>
-                        <a href="{{ route('members.index') }}" class="btn btn-primary btn-round ml-auto">
+                        <a href="{{ route('groups.index') }}" class="btn btn-primary btn-round ml-auto">
                             <i class="flaticon-left-arrow-4 mr-2"></i>
                             View Records
                         </a>
@@ -42,67 +42,49 @@
 
                     <!-- form -->
                     @include('cms.helpers.partials.feedback')
-                    <form id="members-create"
-                        action="@if(isset($member->id))  
-                            {{ route('members.update', ['member' => $member->id]) }}
-                            @else {{ route('members.store' ) }} @endif"
+                    <form id="groups-create"
+                        action="@if(isset($group->id))  
+                            {{ route('groups.update', ['group' => $group->id]) }}
+                            @else {{ route('groups.store' ) }} @endif"
                         method="post"
                         enctype="multipart/form-data">
 
                         @csrf
-                        @if(isset($member->id))
+                        @if(isset($group->id))
                         @method('PUT')
-                        <input type="hidden" name="created_by" value="{{ auth()->id() }}">
                         @endif
 
 
                         <div class="row">
-                            <div class="col-sm-6">
-
-                            </div>
-
-                            <div class="col-sm-6">
-
-                            </div>
-                        </div>
-
-
-
-                        <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="name" class="placeholder">  Name </label>
-                                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Enter Full Name" name="name" value="{{ $member->name ?? '' }}" required />
+                                    <label for="name" class="placeholder"> Name </label>
+                                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Enter Full Name" name="name" value="{{ old('name', $group->name ?? '') }}" required />
                                     @error('name') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
-
-                          
                         </div>
+                        <!-- .row -->
 
 
 
 
 
                         <div class="row">
-                           
-
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="active"> Active </label>
-                                    <select name="active" id="active" class="form-control">
-                                        <option value="1" @if(isset($group->id)) {{ $group->active == '1' ? 'selected' : '' }} @endif> Yes </option>
-                                        <option value="0" @if(isset($group->id)) {{ $group->active == '0' ? 'selected' : '' }} @endif> In Active </option>
+                                    <select name="active" id="active" class="form-control @error('active') is-invalid @enderror">
+                                        <option value="1" {{ old('active', $group->active ?? '') == '1' ? 'selected' : '' }}> Yes </option>
+                                        <option value="0" {{ old('active', $group->active ?? '') == '0' ? 'selected' : '' }}> In Active </option>
                                     </select>
                                     @error('active') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
                         </div>
-
-
-
+                        <!-- .row -->
 
 
 

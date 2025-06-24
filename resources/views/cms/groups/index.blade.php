@@ -81,27 +81,9 @@
                     name: 'DT_RowIndex'
                 },
                 {
-                    data: 'full_name',
+                    data: 'name',
                 },
-                {
-                    data: 'phone'
-                },
-                {
-                    data: 'email'
-                },
-                {
-                    data: 'phone'
-                },
-                {
-                    data: 'marital_status'
-                },
-                {
-                    data: 'join_date'
-                },
-                {
-                    data: 'group_name',
-                    name: 'group.name'
-                },
+                
                 {
                     data: 'created_by'
                 },					

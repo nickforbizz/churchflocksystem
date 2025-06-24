@@ -56,10 +56,10 @@
                         <div class="form-group form-floating-label">
                             @if(isset($permission->id)) 
                             <label for="name" class="">Name</label>
-                            <input id="name" type="text" name="name" class="form-control pl-2 input-border-bottom @error('name') is-invalid @enderror"  value="{{ $permission->name ?? '' }}" readonly />
+                            <input id="name" type="text" name="name" class="form-control pl-2 @error('name') is-invalid @enderror"  value="{{ $permission->name ?? '' }}" readonly />
                             @else
-                            <input id="name" type="text" class="form-control input-border-bottom @error('name') is-invalid @enderror" name="name"  value="{{ $permission->name ?? '' }}" required />
-                            <label for="name" class="placeholder"> Name</label>
+                            <label for="name" > Name</label>
+                            <input id="name" type="text" placeholder="Enter Name" class="form-control @error('name') is-invalid @enderror" name="name"  value="{{ $permission->name ?? '' }}" required />
                             @endif
                             @error('name') <span class="text-danger">{{ $message }}</span>
                             @enderror
