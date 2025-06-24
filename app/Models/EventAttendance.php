@@ -16,6 +16,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int|null $member_id
  * @property int|null $event_id
+ * @property Carbon|null $attendance_date
+ * @property Carbon|null $attendance_time
+ * @property string|null $notes
+ * @property string|null $attendance_type
+ * @property string|null $status
  * @property int|null $active
  * @property int $created_by
  * @property string|null $deleted_at
@@ -36,6 +41,8 @@ class EventAttendance extends Model
 	protected $casts = [
 		'member_id' => 'int',
 		'event_id' => 'int',
+		'attendance_date' => 'datetime',
+		'attendance_time' => 'datetime',
 		'active' => 'int',
 		'created_by' => 'int'
 	];
@@ -43,6 +50,11 @@ class EventAttendance extends Model
 	protected $fillable = [
 		'member_id',
 		'event_id',
+		'attendance_date',
+		'attendance_time',
+		'notes',
+		'attendance_type',
+		'status',
 		'active',
 		'created_by'
 	];
