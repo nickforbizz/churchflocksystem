@@ -208,19 +208,22 @@ class ChurchEventController extends Controller
 
     public function calendarEvents()
     {
-        $year = request()->query('year', Carbon::now()->year);
+        // if the year is not provided, get full data
+        $year = request()->query('year');
+        $query = ChurchEvent::query();
 
-        $events = ChurchEvent::whereYear('event_date', $year)
-                         ->get()
-                         ->map(function ($event) {
+        if ($year) {
+            $query->whereYear('event_date', $year);
+        }
+
+        $events = $query->get()->map(function ($event) {
             return [
-                'id' => $event->id, // Add event ID for click handling
-                'title' => $event->title,
-                // check if event_date is null
-                'start' => $event->event_date ? $event->event_date->toDateString() : null, // Use null for FullCalendar if date is N/A
-                'description' => $event->description,
-                'location' => $event->location,
-                'created_by' => $event->user->name ?? 'N/A',
+            'id' => $event->id,
+            'title' => $event->title,
+            'start' => $event->event_date ? $event->event_date->toDateString() : null,
+            'description' => $event->description,
+            'location' => $event->location,
+            'created_by' => $event->user->name ?? 'N/A',
             ];
         });
 

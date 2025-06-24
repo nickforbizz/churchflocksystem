@@ -100,57 +100,69 @@
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
 <script>
-    $(document).ready(function() {
-        
-
-
-    });
-
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
+        var eventYearSelect = document.getElementById('event_year');
+        var currentSelectedYear = eventYearSelect.value;
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
+            initialDate: currentSelectedYear + '-01-01', // Start calendar on the selected year
             themeSystem: 'bootstrap',
             bootstrapFontAwesome: false,
-            events: "{{ route('calendar.events') }}",
+            events: function(fetchInfo, successCallback, failureCallback) {
+                $.ajax({
+                    url: "{{ route('calendar.events') }}",
+                    method: 'GET',
+                    data: {
+                        year: currentSelectedYear
+                    },
+                    success: function(data) {
+                        successCallback(data);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching calendar events:", textStatus, errorThrown);
+                        failureCallback(errorThrown);
+                    }
+                });
+            },
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,dayGridWeek'
             },
-            // Handle event clicks to show modal
             eventClick: function(info) {
-                // Prevent default URL navigation (if any)
                 info.jsEvent.preventDefault();
 
-                var eventId = info.event.id; // Get the event ID
+                var eventId = info.event.id;
 
-                // Make an AJAX call to fetch event details
                 $.ajax({
-                    url: '/events/' + eventId, // Laravel's resource route for show method
+                    url: '/events/' + eventId,
                     method: 'GET',
                     success: function(data) {
-                        // Populate the modal with fetched data
                         $('#modalEventTitle').text(data.title);
-                        $('#modalEventDate').text(new Date(data.event_date).toLocaleDateString()); // Format date
+                        $('#modalEventDate').text(new Date(data.event_date).toLocaleDateString());
                         $('#modalEventLocation').text(data.location || 'N/A');
-                        $('#modalEventCreatedBy').text(data.user ? data.user.name : 'N/A'); // Access user name
+                        $('#modalEventCreatedBy').text(data.user ? data.user.name : 'N/A');
                         $('#modalEventDescription').text(data.description);
-
-                        // Show the modal
                         $('#eventDetailModal').modal('show');
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         console.error("Error fetching event details:", textStatus, errorThrown);
                         Swal.fire('Error', 'Could not load event details. Please try again.', 'error');
                     }
-                }
-                );
+                });
             },
         });
 
         calendar.render();
+
+        // Add event listener for year change
+        eventYearSelect.addEventListener('change', function() {
+            currentSelectedYear = this.value;
+            calendar.gotoDate(currentSelectedYear + '-01-01'); // Go to the new year
+            calendar.refetchEvents(); // Tell FullCalendar to re-fetch events
+        });
     });
 </script>
 
