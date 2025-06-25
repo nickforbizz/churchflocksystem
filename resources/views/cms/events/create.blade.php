@@ -66,7 +66,7 @@
 
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="event_date" class="placeholder"> Event Date </label>
+                                    <label for="event_date" > Event Date </label>
                                     <input id="event_date" type="date" class="form-control @error('event_date') is-invalid @enderror" name="event_date" value="{{ old('event_date', isset($churchEvent->event_date) ? $churchEvent->event_date->format('Y-m-d') : '') }}" required />
                                     @error('event_date') <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -75,7 +75,7 @@
 
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="description" class="placeholder"> Description</label>
+                                    <label for="description" > Description</label>
                                     <textarea name="description" id="description" placeholder="Enter Description" class="form-control @error('description') is-invalid @enderror">{{ old('description', $churchEvent->description ?? '') }}</textarea>
                                     @error('description') <span class="text-danger">{{ $message }}</span>
                                     @enderror

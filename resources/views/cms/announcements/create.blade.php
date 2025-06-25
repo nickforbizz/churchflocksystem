@@ -52,88 +52,82 @@
                         @csrf
                         @if(isset($announcement->id))
                         @method('PUT')
-                        <input type="hidden" name="created_by" value="{{ auth()->id() }}">
                         @endif
 
 
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-10">
                                 <div class="form-group">
-                                    <label for="member_id">Member</label>
-                                    <select name="member_id" id="member_id" class="form-control @error('member_id') is-invalid @enderror">
-                                        <option value="">-- Select Member --</option>
-                                        @forelse($members as $member)
-                                        <option value="{{ $member->id }}" {{ old('member_id', $announcement->member_id ?? '') == $member->id ? 'selected' : '' }}> {{ $member->full_name }} </option>
-                                        @empty
-                                        <option disabled> -- No members available -- </option>
-                                        @endforelse
-                                    </select>
-                                    @error('member_id') <span class="text-danger">{{ $message }}</span>
+                                    <label for="title"> Title </label>
+                                    <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" placeholder="Enter title" name="title" value="{{ old('title', $announcement->title ?? '') }}" required />
+                                    @error('title') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
-
-                            <div class="col-sm-6">
+                            <div class="col-sm-2">
                                 <div class="form-group">
-                                    <label for="amount" > Amount </label>
-                                    <input id="amount" type="number" class="form-control @error('amount') is-invalid @enderror" placeholder="Enter Amount" name="amount" value="{{ old('amount', isset($announcement->amount) ? $announcement->amount->format('Y-m-d') : '') }}" required />
-                                    @error('amount') <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <div class="row">                          
-
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="purpose">  Purpose </label>
-                                    <select name="purpose" id="purpose" class="form-control @error('purpose') is-invalid @enderror">
-                                        <option value="Tithe" {{ old('purpose', $announcement->purpose ?? '') == 'Tithe' ? 'selected' : '' }}> Tithe</option>
-                                        <option value="Offering" {{ old('purpose', $announcement->purpose ?? '') == 'Offering' ? 'selected' : '' }}> Offering </option>
-                                        <option value="Thanksgiving" {{ old('purpose', $announcement->purpose ?? '') == 'Thanksgiving' ? 'selected' : '' }}> Thanksgiving </option>
-                                        <option value="Pledge" {{ old('purpose', $announcement->purpose ?? '') == 'Pledge' ? 'selected' : '' }}> Pledge </option>
-                                        <option value="Other" {{ old('purpose', $announcement->purpose ?? '') == 'Other' ? 'selected' : '' }}> Other </option>
+                                    <label for="purpose"> Is Public </label>
+                                    <select name="is_public" id="is_public" class="form-control @error('is_public') is-invalid @enderror">
+                                        <option value="1" {{ old('is_public', $announcement->is_public ?? '') == '1' ? 'selected' : '' }}> Yes</option>
+                                        <option value="0" {{ old('is_public', $announcement->is_public ?? '') == '0' ? 'selected' : '' }}> No </option>
                                     </select>
-                                    @error('purpose') <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="method">  Method </label>
-                                    <select name="method" id="method" class="form-control @error('method') is-invalid @enderror">
-                                        <option value="Cash" {{ old('method', $announcement->method ?? '') == 'Cash' ? 'selected' : '' }}> Cash</option>
-                                        <option value="M-Pesa" {{ old('method', $announcement->method ?? '') == 'M-Pesa' ? 'selected' : '' }}> M-Pesa </option>
-                                        <option value="Bank" {{ old('method', $announcement->method ?? '') == 'Bank' ? 'selected' : '' }}> Bank </option>
-                                        <option value="Other" {{ old('method', $announcement->method ?? '') == 'Other' ? 'selected' : '' }}> Other </option>
-                                    </select>
-                                    @error('method') <span class="text-danger">{{ $message }}</span>
+                                    @error('is_public') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
 
                         </div>
-                        <!-- .row -->
+
 
                         <div class="row">
 
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="date" class="placeholder">  Date </label>
-                                    <input id="date" type="date" class="form-control @error('date') is-invalid @enderror" name="date" value="{{ old('date', isset($announcement->date) ? $announcement->date->format('Y-m-d') : '') }}" required />
-                                    @error('date') <span class="text-danger">{{ $message }}</span>
+                                    <label for="starts_at"> Starts At </label>
+                                    <input id="starts_at" type="datetime-local" class="form-control @error('starts_at') is-invalid @enderror" name="starts_at" value="{{ old('starts_at', isset($announcement->starts_at) ? $announcement->starts_at->format('Y-m-d\TH:i') : '') }}" required />
+                                    @error('starts_at') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
 
-                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="ends_at"> Ends At </label>
+                                    <input id="ends_at" type="datetime-local" class="form-control @error('ends_at') is-invalid @enderror" name="ends_at" value="{{ old('ends_at', isset($announcement->ends_at) ? $announcement->ends_at->format('Y-m-d\TH:i') : '') }}" required />
+                                    @error('ends_at') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
 
                         </div>
                         <!-- .row -->
+
+
+
+                        <div class="row">
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="description"> Description</label>
+                                    <textarea name="description" id="description" placeholder="Enter Description" class="form-control @error('description') is-invalid @enderror">{{ old('description', $announcement->description ?? '') }}</textarea>
+                                    @error('description') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="body"> Body</label>
+                                    <textarea name="body" id="body" placeholder="Enter body" class="form-control @error('body') is-invalid @enderror">{{ old('body', $announcement->body ?? '') }}</textarea>
+                                    @error('body') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- .row -->
+
+                        
 
 
 
@@ -160,7 +154,43 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
+        const form = $('#announcement-create');
+        const startsAtInput = $('#starts_at');
+        const endsAtInput = $('#ends_at');
+        const submitBtn = $('.submit-form-btn');
 
+        function validateDates() {
+            const startsAtValue = startsAtInput.val();
+            const endsAtValue = endsAtInput.val();
+
+            // Only validate if both fields have values (required attribute handles empty)
+            if (!startsAtValue || !endsAtValue) {
+                return true;
+            }
+
+            const startsAtDate = new Date(startsAtValue);
+            const endsAtDate = new Date(endsAtValue);
+
+            if (endsAtDate <= startsAtDate) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'The "Ends At" date and time must be after the "Starts At" date and time.',
+                });
+                return false;
+            }
+            return true;
+        }
+
+        form.on('submit', function(e) {
+            if (!validateDates()) {
+                e.preventDefault();
+                e.stopPropagation(); // Stop propagation to prevent other handlers from running
+                // Re-enable the submit button if it was disabled by the general submit-form-btn logic
+                submitBtn.attr('disabled', false).html('Submit');
+                return false;
+            }
+        });
     });
 </script>
 

@@ -145,13 +145,13 @@ class AnnouncementController extends Controller
      */
     public function edit(Announcement $announcement)
     {
-        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit Announcement'))) {
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit announcement'))) {
             return redirect()->route('announcements.index')->with('error', 'You do not have permission to update announcements.');
         }
 
 
 
-        return view('cms.announcements.create', compact('announcement', 'members'));
+        return view('cms.announcements.create', compact('announcement'));
     }
 
     /**

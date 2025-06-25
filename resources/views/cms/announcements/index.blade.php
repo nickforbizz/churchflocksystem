@@ -53,7 +53,6 @@
                                     <th>Starts At</th>
                                     <th>Ends At</th>
                                     <th>Is Public</th>
-                                    <th>Offering Date</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Action</th>
