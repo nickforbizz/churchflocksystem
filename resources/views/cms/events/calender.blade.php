@@ -32,11 +32,10 @@
                 <div class="card-header">
                     <div class="d-flex ">
                         <h4 class="card-title">List of Available Record(s)</h4>
-                        <div class="ml-auto d-flex align-items-center"> {{-- Added d-flex and align-items-center --}}
-                            {{-- Add year filter dropdown --}}
-                            <div class="form-group mb-0 mr-3"> {{-- Added mb-0 for better alignment --}}
-                                <label for="event_year" class="placeholder mb-0 mr-2">Filter by Year:</label> {{-- Added mb-0 and mr-2 --}}
-                                <select id="event_year" class="form-control form-control-sm"> {{-- Added form-control-sm --}}
+                        <div class="ml-auto d-flex align-items-center"> 
+                            <div class="form-group mb-0 mr-4">
+                                <label for="event_year" class="text-bold"> <b>Filter by Year: </b></label> 
+                                <select id="event_year" class="form-control" style="width: 30rem;"> 
                                     @foreach($years as $yearOption)
                                         <option value="{{ $yearOption }}" {{ $selectedYear == $yearOption ? 'selected' : '' }}>
                                             {{ $yearOption }}
@@ -48,7 +47,7 @@
                             @can('create event')
                             <a href="{{ route('events.create') }}" class="btn btn-primary btn-round ml-auto">
                                 <i class="flaticon-add mr-2"></i>
-                                Add Row
+                                Add Event
                             </a>
                             @endcan
                         </div>
