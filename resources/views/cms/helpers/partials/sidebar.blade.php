@@ -94,19 +94,14 @@
 				</li>
 
 
-				<li class="nav-item @if(Route::is('productCategories.*')) active @endif">
-					<a href="{{ route('productCategories.index') }}">
+				<li class="nav-item @if(Route::is('announcements.*')) active @endif">
+					<a href="{{ route('announcements.index') }}">
 						<i class="far fa-clone"></i>
-						<p> Product Categories</p>
+						<p> Announcements </p>
 					</a>
 				</li>
 
-				<li class="nav-item @if(Route::is('products.*')) active @endif">
-					<a href="{{ route('products.index') }}">
-						<i class="far fa-edit"></i>
-						<p> Products</p>
-					</a>
-				</li>
+				
 
 				<li class="nav-item @if(Route::is('reports.*')) active @endif">
 					<a href="{{ route('reports.index') }}">

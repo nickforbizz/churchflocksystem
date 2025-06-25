@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-class DonationRequest extends FormRequest
+class AnnouncementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,11 +29,12 @@ class DonationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'member_id' => 'required|exists:members,id',
-            'amount' => 'required|numeric',
-            'purpose' => 'required',
-            'method' => 'required',
-            'date' => 'required|date',
+            'title' => 'required|min:2|max:255',
+            'description' => 'nullable',
+            'body' => 'required',
+            'starts_at' => 'required|date',
+            'ends_at' => 'required|date',
+            'is_public' => 'boolean',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
         ];
@@ -50,12 +51,7 @@ class DonationRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        // generate UUID receipt number
-        if ($this->isMethod('post') && !$this->has('receipt_number')) {
-            $this->merge([
-                'receipt_number' => (string) Str::uuid()
-            ]);
-        }
+        
         // This sets variables before validation occurs.
         $this->merge([
             'created_by' => Auth::id()
