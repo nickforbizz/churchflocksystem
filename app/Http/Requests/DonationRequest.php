@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-class GroupRequest extends FormRequest
+class DonationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,7 +17,7 @@ class GroupRequest extends FormRequest
         $user = auth()->user();
         // return $user->hasAnyRole(['admin', 'superadmin']);
         
-        // Only allow authenticated users to create groups
+        // Only allow authenticated users to create donations
         return Auth::check();
     }
 
@@ -29,7 +29,11 @@ class GroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:2|max:255',
+            'member_id' => 'required|exists:members,id',
+            'amount' => 'required|numeric',
+            'purpose' => 'required',
+            'method' => 'required',
+            'date' => 'required|date',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
         ];

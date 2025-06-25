@@ -3,6 +3,7 @@
 use App\Events\UserRegistered;
 use App\Http\Controllers\cms\AssignRoleController;
 use App\Http\Controllers\cms\ChurchEventController;
+use App\Http\Controllers\cms\DonationController;
 use App\Http\Controllers\cms\EventAttendanceController;
 use App\Http\Controllers\cms\GroupController;
 use App\Http\Controllers\cms\MemberController;
@@ -101,6 +102,7 @@ Route::middleware('cms')->group(function () {
         'groups' => GroupController::class,
         'events' => ChurchEventController::class,
         'eventAttendance' => EventAttendanceController::class,
+        'donations' => DonationController::class,
 
 
         'posts' => PostController::class,

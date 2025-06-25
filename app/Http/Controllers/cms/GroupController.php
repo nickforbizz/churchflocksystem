@@ -66,6 +66,11 @@ class GroupController extends Controller
      */
     public function create()
     {
+
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create group'))) {
+            return redirect()->route('groups.index')->with('error', 'You do not have permission to create groups.');
+        }
+        
         return view('cms.groups.create');
     }
 
@@ -74,9 +79,14 @@ class GroupController extends Controller
      */
     public function store(GroupRequest $request)
     {
-        // dd($request->validated(), Auth::user()->can('create', Group::class));
-        // Validate the request data
-        Group::create($request->validated());
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create group'))) {
+            return redirect()->route('groups.index')->with('error', 'You do not have permission to create groups.');
+        }
+
+        if (!Group::create($request->validated())) {
+            return redirect()->back()->with('error', 'Failed to create record. Please try again.');
+        }
+
         return redirect()->back()->with('success', 'Record Created Successfully');
     }
 
@@ -94,6 +104,10 @@ class GroupController extends Controller
      */
     public function edit(Group $group)
     {
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit group'))) {
+            return redirect()->route('groups.index')->with('error', 'You do not have permission to update groups.');
+        }
+
         return view('cms.groups.create', compact('group'));
     }
 
@@ -102,7 +116,14 @@ class GroupController extends Controller
      */
     public function update(GroupRequest $request, Group $group)
     {
-        $group->update($request->all());
+        // Check if the user has permission to update groups
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('edit group'))) {
+            return redirect()->route('groups.index')->with('error', 'You do not have permission to update groups.');
+        }
+
+        if (!$group->update($request->validated())) {
+            return redirect()->back()->with('error', 'Failed to update record. Please try again.');
+        }
 
         // Redirect the user to the user's profile page
         return redirect()
@@ -115,6 +136,13 @@ class GroupController extends Controller
      */
     public function destroy(group $group)
     {
+        // Check if the user has permission to delete groups
+        if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('delete group'))) {
+            return response()->json([
+                'code' => -1,
+                'msg' => 'You do not have permission to delete groups.'
+            ], 403, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
         if ($group->delete()) {
             return response()->json([
                 'code' => 1,
