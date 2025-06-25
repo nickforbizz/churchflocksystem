@@ -86,6 +86,13 @@
 					</a>
 				</li>
 
+				<li class="nav-item @if(Route::is('donations.*')) active @endif">
+					<a href="{{ route('donations.index') }}">
+						<i class="far fa-clone"></i>
+						<p> Donations & Givings </p>
+					</a>
+				</li>
+
 
 				<li class="nav-item @if(Route::is('productCategories.*')) active @endif">
 					<a href="{{ route('productCategories.index') }}">
@@ -125,7 +132,7 @@
 						<ul class="nav nav-collapse">
 							<li>
 								<a data-toggle="collapse" href="#subnav2">
-									<span class="sub-item">Users</span>
+									<span class="sub-item">Authorization</span>
 									<span class="caret"></span>
 								</a>
 								<div class="@if(Route::is('roles.*') || Route::is('permissions.*')) collapsed @else collapse @endif" id="subnav2">
