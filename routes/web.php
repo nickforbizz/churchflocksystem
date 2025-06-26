@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\UserRegistered;
+use App\Http\Controllers\cms\AnnouncementController;
 use App\Http\Controllers\cms\AssignRoleController;
 use App\Http\Controllers\cms\ChurchEventController;
 use App\Http\Controllers\cms\DonationController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\cms\RoleController;
 use App\Http\Controllers\cms\SearchController;
 use App\Http\Controllers\frontend\ViewsController;
 use App\Http\Controllers\HomeController;
+use App\Models\Announcement;
 use App\Models\ChurchEvent;
 use App\Models\Event;
 use App\Models\User;
@@ -103,6 +105,7 @@ Route::middleware('cms')->group(function () {
         'events' => ChurchEventController::class,
         'eventAttendance' => EventAttendanceController::class,
         'donations' => DonationController::class,
+        'announcements' => AnnouncementController::class,
 
 
         'posts' => PostController::class,
@@ -125,4 +128,5 @@ Route::middleware('cms')->group(function () {
     Route::post('/notifications//mark-as-read', [NotificationController::class, 'markNotification'])->name('notifications.markNotification');
 });
 
-
+// Route for sending announcements to groups
+Route::post('/announcements/{announcement}/send-to-groups', [AnnouncementController::class, 'sendToGroups'])->name('announcements.sendToGroups');

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 
  * @property int $id
  * @property int|null $member_id
+ * @property string|null $receipt_number
  * @property float|null $amount
  * @property string|null $method
  * @property string|null $purpose
@@ -38,13 +39,14 @@ class Donation extends Model
 	protected $casts = [
 		'member_id' => 'int',
 		'amount' => 'float',
-		'date' => 'date',
+		'date' => 'datetime',
 		'created_by' => 'int',
 		'active' => 'int'
 	];
 
 	protected $fillable = [
 		'member_id',
+		'receipt_number',
 		'amount',
 		'method',
 		'purpose',

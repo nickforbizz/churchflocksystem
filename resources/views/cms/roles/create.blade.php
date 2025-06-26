@@ -53,20 +53,20 @@
                         @endif
 
 
-                        <div class="form-group form-floating-label">
+                        <div class="form-group ">
                             @if(isset($role->id)) 
                             <label for="name" class="">Name</label>
-                            <input id="name" type="text" name="name" class="form-control pl-2 input-border-bottom @error('name') is-invalid @enderror"  value="{{ $role->name ?? '' }}" readonly />
+                            <input id="name" type="text" name="name" class="form-control pl-2  @error('name') is-invalid @enderror"  value="{{ $role->name ?? '' }}" readonly />
                             @else
-                            <input id="name" type="text" class="form-control input-border-bottom @error('name') is-invalid @enderror" name="name"  value="{{ $role->name ?? '' }}" required />
+                            <input id="name" type="text" class="form-control  @error('name') is-invalid @enderror" name="name"  value="{{ $role->name ?? '' }}" required />
                             <label for="name" class="placeholder"> Name</label>
                             @endif
                             @error('name') <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        <div class="form-group form-floating-label">
-                            <input id="guard_name" type="text" class="form-control pl-2 input-border-bottom @error('guard_name') is-invalid @enderror" name="guard_name"  value="{{ $role->guard_name ?? '' }}" required />
+                        <div class="form-group ">
+                            <input id="guard_name" type="text" class="form-control pl-2  @error('guard_name') is-invalid @enderror" name="guard_name"  value="{{ $role->guard_name ?? '' }}" required />
                             <label for="guard_name" class="placeholder"> Guard Name</label>
                             @error('guard_name') <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -74,7 +74,7 @@
 
                         <div class="form-group">
                             <label for="permission"> Permissions </label>
-                            <select name="permissions[]" id="permission" multiple="multiple" class="form-control form-control select2">
+                            <select name="permissions[]" id="permission" multiple="multiple" class="form-control select2">
                                 @forelse($permissions as $permission)
                                     <option value="{{ $permission->name }}" @if(in_array($permission->name, $role_permissions)) selected @endif > {{ $permission->name }} </option>
                                 @empty
@@ -93,7 +93,7 @@
 
 
                         <div class="card">
-                            <div class="form-group form-floating-label">
+                            <div class="form-group ">
                                 <button class="btn btn-success btn-round float-right">Submit</button>
                             </div>
                         </div>
