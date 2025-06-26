@@ -128,4 +128,5 @@ Route::middleware('cms')->group(function () {
     Route::post('/notifications//mark-as-read', [NotificationController::class, 'markNotification'])->name('notifications.markNotification');
 });
 
-
+// Route for sending announcements to groups
+Route::post('/announcements/{announcement}/send-to-groups', [AnnouncementController::class, 'sendToGroups'])->name('announcements.sendToGroups');

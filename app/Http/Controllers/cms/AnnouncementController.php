@@ -7,11 +7,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
 use App\Models\Announcement;
+use App\Models\Group; // Added for sendToGroups
 use App\Http\Requests\AnnouncementRequest;
 use DataTables;
+use App\Jobs\SendAnnouncementToGroupMembers; // Added for sendToGroups
 
 class AnnouncementController extends Controller
 {
@@ -126,16 +129,18 @@ class AnnouncementController extends Controller
     public function show(Request $request, Announcement $announcement)
     {
         // Eager load relationships for both JSON and view responses
-        $announcement->load(['user']);
+        $announcement->load(['user', 'groups']);
 
         if ($request->wantsJson()) {
             return response()
             ->json($announcement, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
         }
 
-        
+        // Fetch active groups for the "Send to Groups" modal.
+        // It's better to pass this from the controller than to query in the view.
+        $groups = Group::where('active', 1)->orderBy('name')->get();
 
-        return view('cms.announcements.view', compact('announcement'));
+        return view('cms.announcements.view', compact('announcement', 'groups'));
 
         
     }
@@ -197,5 +202,42 @@ class AnnouncementController extends Controller
             'code' => -1,
             'msg' => 'Record did not delete'
         ], 422, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+    }
+
+    /**
+     * Send the specified announcement to selected groups.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Announcement $announcement
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sendToGroups(Request $request, Announcement $announcement)
+    {
+        // Check permission
+        if (!auth()->user()->hasPermissionTo('send announcement to groups')) {
+            return redirect()->back()->with('error', 'You do not have permission to send announcements to groups.');
+        }
+
+        $request->validate([
+            'group_ids' => 'required|array|min:1',
+            'group_ids.*' => 'exists:groups,id',
+            'send_via' => 'required|array|min:1',
+            'send_via.*' => 'in:email,sms',
+        ]);
+
+        $groupIds = $request->input('group_ids');
+        $sendVia = $request->input('send_via');
+        $message = $request->input('message');
+
+        $syncData = array_fill_keys($groupIds, ['created_by' => auth()->id()]);
+        // Sync the groups with the announcement, providing the extra pivot data.
+        // This assumes you have a pivot table (e.g., announcement_group) with a 'created_by' column.
+        $announcement->groups()->sync($syncData);
+
+        dispatch(new SendAnnouncementToGroupMembers($announcement, $groupIds, $sendVia, $message))
+            ->onQueue('announcements') // Specify the queue name if you have a specific queue for announcements
+            ->delay(now()->addSeconds(5)); // Optional: delay the job by 5 seconds
+
+        return redirect()->back()->with('success', 'Announcement sending process initiated. Members will receive notifications shortly.');
     }
 }

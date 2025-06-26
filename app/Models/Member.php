@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class Member
@@ -37,7 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Member extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, Notifiable;
 	protected $table = 'members';
 
 	protected $casts = [
@@ -79,4 +80,15 @@ class Member extends Model
 	{
 		return $this->hasMany(EventAttendance::class);
 	}
+
+	/**
+     * Route notifications for the Twilio channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function routeNotificationForTwilio($notification)
+    {
+        return $this->phone; // Assuming 'phone' column exists for SMS
+    }
 }
