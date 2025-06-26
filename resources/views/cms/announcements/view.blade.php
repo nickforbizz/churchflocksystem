@@ -30,14 +30,33 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="d-flex align-items-center">
-                        <h4 class="card-title">List of Available Record(s)</h4>
-                        @can('create announcement')
-                        <a href="{{ route('announcements.create') }}" class="btn btn-primary btn-round ml-auto">
-                            <i class="flaticon-add mr-2"></i>
-                            Add Row
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title">Announcement Details</h4>
+                        <div class="card-tools">
+                            <a href="{{ route('announcements.index') }}" class="btn btn-secondary btn-round">
+                                <i class="flaticon-left-arrow-4 mr-2"></i>
+                                Back
+                            </a>
+                            @can('send announcement to groups')
+                            <button type="button" class="btn btn-info btn-round" data-toggle="modal" data-target="#sendToGroupsModal">
+                                <i class="fa fa-paper-plane"></i> Send to Groups
+                            </button>
+                            @endcan
+                            @can('edit announcement')
+                            <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-warning btn-round">
+                                <i class="fa fa-edit"></i> Edit
+                            </a>
+                            @endcan
+                            @can('delete announcement')
+                            <form action="{{ route('announcements.destroy', $announcement->id) }}" method="POST" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-round" onclick="return confirm('Are you sure you want to delete this announcement?');">
+                                    <i class="fa fa-times"></i> Delete
+                                </button>
+                            </form>
+                            @endcan
                         </a>
-                        @endcan
                     </div>
                 </div>
                 <div class="card-body">
@@ -55,16 +74,16 @@
 
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <p><strong>Starts At:</strong> {{ $announcement->starts_at ? $announcement->starts_at->format('Y-m-d H:i') : 'N/A' }}</p>
+                            <p><strong>Starts:</strong> <span class="badge badge-info">{{ $announcement->starts_at ? $announcement->starts_at->format('D, M j, Y g:i A') : 'N/A' }}</span></p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Ends At:</strong> {{ $announcement->ends_at ? $announcement->ends_at->format('Y-m-d H:i') : 'N/A' }}</p>
+                            <p><strong>Ends:</strong> <span class="badge badge-warning">{{ $announcement->ends_at ? $announcement->ends_at->format('D, M j, Y g:i A') : 'N/A' }}</span></p>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-12">
-                            <p><strong>Is Public:</strong> {{ $announcement->is_public ? 'Yes' : 'No' }}</p>
+                            <p><strong>Visibility:</strong> {!! $announcement->is_public ? '<span class="badge badge-success">Public</span>' : '<span class="badge badge-danger">Private</span>' !!}</p>
                         </div>
                     </div>
 
@@ -72,7 +91,9 @@
                     <div class="row mt-3">
                         <div class="col-md-12">
                             <h4>Description</h4>
-                            <p>{{ $announcement->description }}</p>
+                            <div class="card-text bg-light p-3 rounded">
+                                <p class="mb-0">{{ $announcement->description }}</p>
+                            </div>
                         </div>
                     </div>
                     @endif
@@ -81,58 +102,33 @@
                     <div class="row mt-3">
                         <div class="col-md-12">
                             <h4>Body</h4>
-                            <div class="card-text">
+                            <div class="card-text bg-light p-3 rounded">
                                 {!! nl2br(e($announcement->body)) !!} {{-- Use nl2br for new lines, e for escaping --}}
                             </div>
                         </div>
                     </div>
                     @endif
-
-                    {{-- New section to display groups this announcement was sent to --}}
-                    @if($announcement->groups->isNotEmpty())
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <h4>Sent to Groups</h4>
-                            <div class="list-group list-group-flush">
-                                @foreach($announcement->groups as $group)
-                                    <div class="list-group-item">{{ $group->name }}</div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <hr>
-                    <div class="row mt-3">
-                        <div class="col-md-12 text-right">
-                            {{-- New button for sending to groups --}}
-                            @can('send announcement to groups')
-                            <button type="button" class="btn btn-info btn-round" data-toggle="modal" data-target="#sendToGroupsModal">
-                                <i class="fa fa-paper-plane"></i> Send to Groups
-                            </button>
-                            @endcan
-
-                            @can('edit announcement')
-                            <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-warning btn-round">
-                                <i class="fa fa-edit"></i> Edit Announcement
-                            </a>
-                            @endcan
-                            @can('delete announcement')
-                            <form action="{{ route('announcements.destroy', $announcement->id) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-round" onclick="return confirm('Are you sure you want to delete this announcement?');">
-                                    <i class="fa fa-times"></i> Delete Announcement
-                                </button>
-                            </form>
-                            @endcan
-
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- Sent to Groups Card --}}
+    @if($announcement->groups->isNotEmpty())
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header"><h4 class="card-title">Distribution History</h4></div>
+                <div class="card-body">
+                    <p>This announcement has been sent to the following groups:</p>
+                    @foreach($announcement->groups as $group)
+                        <span class="badge badge-primary mr-1 mb-1" style="font-size: 14px;">{{ $group->name }}</span>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 <!-- .page-inner -->
 
