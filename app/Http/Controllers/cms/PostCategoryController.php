@@ -7,11 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\PostCategory;
 
 
+use App\Http\Requests\PostCategoryRequest;
 use App\Http\Requests\StorePostCategoryRequest;
-use App\Http\Requests\UpdatePostCategoryRequest;
-
 use Illuminate\Http\Request;
 use DataTables;
+use Illuminate\Support\Str;
 
 class PostCategoryController extends Controller
 {
@@ -26,7 +26,19 @@ class PostCategoryController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($row) {
+                    if (is_null($row->created_at)) {
+                        return 'N/A';
+                    }
                     return date_format($row->created_at, 'Y/m/d H:i');
+                })
+                ->editColumn('active', function ($row) {
+                    return $row->active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>';
+                })
+                ->editColumn('created_by', function ($row) {
+                    if (is_null($row->created_by)) {
+                        return 'N/A';
+                    }
+                    return $row->user ->name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
@@ -51,7 +63,7 @@ class PostCategoryController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['active','action'])
                 ->make(true);
         }
 
@@ -72,8 +84,12 @@ class PostCategoryController extends Controller
      */
     public function store(StorePostCategoryRequest $request)
     {
-        PostCategory::create($request->all());
-        return redirect()->back()->with('success', 'Record Created Successfully');
+        $data = $request->validated();
+        $data['created_by'] = auth()->id();
+        $data['slug'] = Str::slug($data['name']);
+
+        PostCategory::create($data);
+        return redirect()->route('postCategories.index')->with('success', 'Record Created Successfully');
     }
 
     /**
@@ -96,10 +112,13 @@ class PostCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostCategoryRequest $request, PostCategory $postCategory)
+    public function update(PostCategoryRequest $request, PostCategory $postCategory)
     {
 
-        $postCategory->update($request->all());
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
+
+        $postCategory->update($data);
 
         // Redirect the user to the user's profile page
         return redirect()

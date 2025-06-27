@@ -6,7 +6,7 @@
         <h4 class="page-title"> Post Categories </h4>
         <ul class="breadcrumbs">
             <li class="nav-home">
-                <a href="#">
+                <a href="{{ route('cms') }}">
                     <i class="flaticon-home"></i>
                 </a>
             </li>
@@ -14,13 +14,13 @@
                 <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Post Categories</a>
+                <a href="{{ route('postCategories.index') }}">Post Categories</a>
             </li>
             <li class="separator">
                 <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Create</a>
+                <a href="#">{{ isset($postCategory) ? 'Edit' : 'Create' }}</a>
             </li>
         </ul>
     </div>
@@ -42,52 +42,53 @@
 
                     <!-- form -->
                     @include('cms.helpers.partials.feedback')
-                    <form id="postCategories-create" 
-                            action="@if(isset($postCategory->id))  
-                            {{ route('postCategories.update', ['postCategory' => $postCategory->id]) }}
-                            @else {{ route('postCategories.store' ) }} @endif"  
-                            method="post" 
-                            enctype="multipart/form-data">
+                    <form id="postCategories-create" action="{{ isset($postCategory) ? route('postCategories.update', $postCategory->id) : route('postCategories.store') }}" method="post">
 
                         @csrf
                         @if(isset($postCategory->id))
                             @method('PUT')
-                            <input type="hidden" name="created_by" value="{{ auth()->id() }}">
                         @endif
 
-
-                        <div class="form-group form-floating-label">
-                            @if(isset($postCategory->id)) 
-                            <label for="name" class="">Name</label>
-                            <input id="name" type="text" class="form-control input-border-bottom @error('name') is-invalid @enderror"  value="{{ $postCategory->name ?? '' }}" readonly disabled />
-                            @else
-                            <input id="name" type="text" class="form-control input-border-bottom @error('name') is-invalid @enderror" name="name"  value="{{ $postCategory->name ?? '' }}" required />
-                            <label for="name" class="placeholder">name</label>
-                            @endif
-                            @error('email') <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group form-floating-label">
-                            <textarea name="description" id="description" class="form-control input-border-bottom" >{{ $postCategory->description ?? '' }}
-                            </textarea>
-                            <label for="description" class="placeholder"> Description</label>
-                            @error('description') <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        
-
-
-
-                        <div class="card">
-                            <div class="form-group form-floating-label">
-                                <button class="btn btn-success btn-round float-right">Submit</button>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $postCategory->name ?? '') }}" required>
+                                    @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="active">Status</label>
+                                    <select name="active" id="active" class="form-control @error('active') is-invalid @enderror">
+                                        <option value="1" {{ old('active', $postCategory->active ?? '1') == '1' ? 'selected' : '' }}> Active</option>
+                                        <option value="0" {{ old('active', $postCategory->active ?? '1') == '0' ? 'selected' : '' }}> Inactive </option>
+                                    </select>
+                                    @error('active')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="3">{{ old('description', $postCategory->description ?? '') }}</textarea>
+                            @error('description') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                     </form>
                     <!-- End form -->
 
+                </div>
+                <div class="card-action">
+                    <button type="submit" form="postCategories-create" class="btn btn-success">Submit</button>
+                    <a href="{{ route('postCategories.index') }}" class="btn btn-danger">Cancel</a>
                 </div>
             </div>
         </div>
@@ -101,11 +102,8 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        
+        // Optional: You could add JavaScript here to auto-generate a slug from the name field for a better UX.
     });
-
-
-    
 </script>
 
 @endpush

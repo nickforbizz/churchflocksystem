@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-class StorePostCategoryRequest extends FormRequest
+class PostCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,10 @@ class StorePostCategoryRequest extends FormRequest
     public function authorize(): bool
     {
         $user = auth()->user();
-        return $user->hasAnyRole(['writer', 'editor', 'admin', 'superadmin']);
+
+        return auth()->check();
+
+        // return $user->hasAnyRole(['writer', 'editor', 'admin', 'superadmin']);
     }
 
     /**
@@ -25,9 +28,13 @@ class StorePostCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        
+        // rules for creating and updating a post category
         return [
-            'name' => ['required', 'min:2', Rule::unique('post_categories')],
+            'name' => ['required', 'min:2', Rule::unique('post_categories', 'name')->ignore($this->route('postCategory'))],
+            'description' => ['nullable', 'min:5'],
+            'slug' => ['nullable', 'min:2', Rule::unique('post_categories', 'slug')->ignore($this->route('postCategory'))],
+            'created_by' => ['required', 'exists:users,id'],
+            'active' => ['nullable', 'boolean'],
         ];
     }
 
@@ -40,7 +47,7 @@ class StorePostCategoryRequest extends FormRequest
     }
 
 
-    public function passedValidation()
+    public function prepareForValidation()
     {
         $this->merge([
             'slug' => Str::slug($this->input('name')),
