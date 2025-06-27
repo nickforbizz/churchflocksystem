@@ -101,6 +101,35 @@
 					</a>
 				</li>
 
+
+				<!-- have posts routes, categories and posts -->
+				 <li class="nav-item @if(Route::is('posts.*') || 
+									Route::is('postCategories.*')  ) active 
+									@endif">
+					<a data-toggle="collapse" href="#submenu">
+						<i class="fas fa-cog"></i>
+						<p>Posts</p>
+						<span class="caret"></span>
+					</a>
+					<div class="@if( Route::is('posts.*') || 
+								     Route::is('postCategories.*') ) collapsed @else collapse @endif"
+						id="submenu">
+						<ul class="nav nav-collapse">
+							<li class=" @if(Route::is('postCategories.*')) active @endif">
+								<a href="{{ route('postCategories.index') }}">
+									<span class="sub-item"> Categories </span>
+								</a>
+							</li>
+
+							<li class=" @if(Route::is('posts.*')) active @endif">
+								<a href="{{ route('posts.index') }}">
+									<span class="sub-item"> Posts </span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+
 				
 
 				<li class="nav-item @if(Route::is('reports.*')) active @endif">
