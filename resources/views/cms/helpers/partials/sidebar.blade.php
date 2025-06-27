@@ -49,7 +49,7 @@
 				@if(auth()->user()->hasAnyRole(['admin', 'superadmin']))
 				<li class="nav-item @if(Route::is('users.*')) active @endif">
 					<a href="{{ route('users.index') }}">
-						<i class="icon-people"></i>
+						<i class="icon-user-follow"></i>
 						<p>Users</p>
 					</a>
 				</li>
@@ -58,7 +58,7 @@
 
 				<li class="nav-item @if(Route::is('groups.*')) active @endif">
 					<a href="{{ route('groups.index') }}">
-						<i class="far fa-clone"></i>
+						<i class="far icon-layers"></i>
 						<p> Groups </p>
 					</a>
 				</li>
@@ -66,7 +66,7 @@
 
 				<li class="nav-item @if(Route::is('members.*')) active @endif">
 					<a href="{{ route('members.index') }}">
-						<i class="far fa-clone"></i>
+						<i class="icon-people "></i>
 						<p> Members </p>
 					</a>
 				</li>
@@ -74,21 +74,21 @@
 
 				<li class="nav-item @if(Route::is('events.*')) active @endif">
 					<a href="{{ route('events.index') }}">
-						<i class="far fa-clone"></i>
+						<i class="icon-calendar"></i>
 						<p> Events </p>
 					</a>
 				</li>
 
 				<li class="nav-item @if(Route::is('eventAttendance.*')) active @endif">
 					<a href="{{ route('eventAttendance.index') }}">
-						<i class="far fa-clone"></i>
+						<i class="icon-arrow-down-circle"></i>
 						<p> Attendance </p>
 					</a>
 				</li>
 
 				<li class="nav-item @if(Route::is('donations.*')) active @endif">
 					<a href="{{ route('donations.index') }}">
-						<i class="far fa-clone"></i>
+						<i class="icon-present"></i>
 						<p> Donations & Givings </p>
 					</a>
 				</li>
@@ -96,7 +96,7 @@
 
 				<li class="nav-item @if(Route::is('announcements.*')) active @endif">
 					<a href="{{ route('announcements.index') }}">
-						<i class="far fa-clone"></i>
+						<i class="icon-feed"></i>
 						<p> Announcements </p>
 					</a>
 				</li>
@@ -107,7 +107,7 @@
 									Route::is('postCategories.*')  ) active 
 									@endif">
 					<a data-toggle="collapse" href="#submenu">
-						<i class="fas fa-cog"></i>
+						<i class="icon-docs"></i>
 						<p>Posts</p>
 						<span class="caret"></span>
 					</a>

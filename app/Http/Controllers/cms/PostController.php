@@ -45,7 +45,7 @@ class PostController extends Controller
                     return Str::limit($row->content, 20, '...');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn_edit = $btn_del = null;
+                    $btn_edit = $btn_view = $btn_del = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
                         $btn_edit = '<a data-toggle="tooltip" 
                                     href="' . route('posts.edit', $row->id) . '" 
@@ -65,7 +65,14 @@ class PostController extends Controller
                                 <i class="fa fa-times"></i>
                             </button>';
                     }
-                    return $btn_edit . $btn_del;
+
+                    $btn_view = '<a data-toggle="tooltip" 
+                                href="' . route('posts.show', $row->id) . '" 
+                                class="btn btn-link btn-info btn-lg" 
+                                data-original-title="View Record">
+                            <i class="fa fa-eye"></i>
+                        </a>';
+                    return $btn_edit . $btn_view . $btn_del;
                 })
                 ->rawColumns(['featured_img', 'category_id', 'title', 'content', 'action'])
                 ->make(true);
@@ -108,7 +115,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post;
+        // Eager load relationships for the view
+        $post->load(['post_category', 'user']);
+        return view('cms.posts.view', compact('post'));
     }
 
     /**
