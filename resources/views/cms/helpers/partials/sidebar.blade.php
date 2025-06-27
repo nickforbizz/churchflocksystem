@@ -134,7 +134,7 @@
 
 				<li class="nav-item @if(Route::is('reports.*')) active @endif">
 					<a href="{{ route('reports.index') }}">
-						<i class="far fa-edit"></i>
+						<i class="icon-pie-chart"></i>
 						<p> Reports</p>
 					</a>
 				</li>
