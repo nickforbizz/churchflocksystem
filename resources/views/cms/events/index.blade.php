@@ -60,6 +60,7 @@
                                     <th>#</th>
                                     <th>Title</th>
                                     <th>Event Date</th>
+                                    <th>Location</th>
                                     <th>Description</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
@@ -96,6 +97,9 @@
                 },
                 {
                     data: 'event_date'
+                },
+                {
+                    data: 'location'
                 },
                 {
                     data: 'description'

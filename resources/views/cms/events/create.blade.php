@@ -75,6 +75,15 @@
 
                             <div class="col-sm-12">
                                 <div class="form-group">
+                                    <label for="location"> Location </label>
+                                    <input id="location" type="text" class="form-control @error('location') is-invalid @enderror" placeholder="Enter Location" name="location" value="{{ old('location', $churchEvent->location ?? '') }}" />
+                                    @error('location') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
                                     <label for="description" > Description</label>
                                     <textarea name="description" id="description" placeholder="Enter Description" class="form-control @error('description') is-invalid @enderror">{{ old('description', $churchEvent->description ?? '') }}</textarea>
                                     @error('description') <span class="text-danger">{{ $message }}</span>

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DataTables;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class ChurchEventController extends Controller
 {
@@ -30,6 +31,13 @@ class ChurchEventController extends Controller
                     }
 
                     return date_format($row->created_at, 'Y/m/d H:i');
+                })
+                ->editColumn('description', function ($row) {
+                    // check if description is null
+                    if (is_null($row->description)) {
+                        return 'N/A';
+                    }
+                    return Str::limit($row->description, 50);
                 })
                 ->editColumn('event_date', function ($row) {
                     // check if event_date is null

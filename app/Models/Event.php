@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string|null $title
  * @property string|null $description
+ * @property string|null $location
  * @property Carbon|null $event_date
  * @property int|null $active
  * @property int $created_by
@@ -44,6 +45,7 @@ class Event extends Model
 		'title',
 		'description',
 		'event_date',
+		'location',
 		'active',
 		'created_by'
 	];

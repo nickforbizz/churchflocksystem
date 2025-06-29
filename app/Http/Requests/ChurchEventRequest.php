@@ -30,7 +30,8 @@ class ChurchEventRequest extends FormRequest
     {
         return [
             'title' => 'required|min:2|max:255',
-            'description' => 'nullable|max:1000',
+            'location' => 'required|min:2|max:255',
+            'description' => 'nullable',
             'event_date' => 'required',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',

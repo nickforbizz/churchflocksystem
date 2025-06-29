@@ -6,7 +6,7 @@
         <h4 class="page-title"> Events </h4>
         <ul class="breadcrumbs">
             <li class="nav-home">
-                <a href="#">
+                <a href="{{ route('cms') }}">
                     <i class="flaticon-home"></i>
                 </a>
             </li>
@@ -14,13 +14,13 @@
                 <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-                <a href="#"> Events</a>
+                <a href="{{ route('events.index') }}"> Events</a>
             </li>
             <li class="separator">
                 <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Index</a>
+                <a href="#">Calendar</a>
             </li>
         </ul>
     </div>
@@ -70,19 +70,20 @@
 
 <!-- Event Detail Modal -->
 <div class="modal fade" id="eventDetailModal" tabindex="-1" role="dialog" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eventDetailModalLabel">Event Details</h5>
+            <div class="modal-header bg-primary ">
+                <h5 class="modal-title text-white" id="eventDetailModalLabel">Event Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <h4 id="modalEventTitle"></h4>
+                <h3 id="modalEventTitle"></h3>
                 <p><strong>Date:</strong> <span id="modalEventDate"></span></p>
                 <p><strong>Location:</strong> <span id="modalEventLocation"></span></p>
                 <p><strong>Created By:</strong> <span id="modalEventCreatedBy"></span></p>
+                <p><strong>Description:</strong></p>
                 <p id="modalEventDescription"></p>
             </div>
             <div class="modal-footer">
@@ -136,9 +137,13 @@
                 var eventId = info.event.id;
 
                 $.ajax({
-                    url: '/events/' + eventId,
+                    // url: '/events/' + eventId,
+                    url: "{{ route('events.index') }}/" + eventId,
                     method: 'GET',
+                    dataType: 'json',
                     success: function(data) {
+                        console.log("Event data:", data);
+                        // Populate the modal with event details
                         $('#modalEventTitle').text(data.title);
                         $('#modalEventDate').text(new Date(data.event_date).toLocaleDateString());
                         $('#modalEventLocation').text(data.location || 'N/A');
