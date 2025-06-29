@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Donation;
+use App\Models\Event;
+use App\Models\Group;
+use App\Models\Member;
+use App\Services\ReportService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -22,24 +29,39 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function cms(ReportService $reportService)
     {
+        // Top Stat Cards
+        $totalMembers = Member::count();
+        $totalGroups = Group::count();
+        $donationsThisMonth = Donation::whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $upcomingEvents = Event::where('event_date', '>=', now())->count();
 
-        // Cache::put('name', auth()->user(), 1000);
-        // dd(
-        //     Cache::get('name')
-        // );
-        return view('home');
-    }
+        // Membership Growth Chart (for the current year)
+        $membershipReport = $reportService->getCountByMonth(new Member, now()->year);
+        $membershipGrowthData = $membershipReport['chartData'];
 
+        // Donations by Purpose Chart (for the current year)
+        $donationsByPurpose = Donation::whereYear('date', now()->year)
+            ->select('purpose', DB::raw('SUM(amount) as total'))
+            ->groupBy('purpose')
+            ->orderBy('total', 'desc')
+            ->limit(5) // Top 5 purposes
+            ->pluck('total', 'purpose');
 
-    /**
-     * Show the application cms.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function cms()
-    {
-        return view('cms.index');
+        // Recent Activity Lists
+        $recentMembers = Member::with('group')->latest()->take(5)->get();
+        $recentDonations = Donation::with('member')->latest()->take(5)->get();
+
+        return view('cms.index', compact(
+            'totalMembers',
+            'totalGroups',
+            'donationsThisMonth',
+            'upcomingEvents',
+            'membershipGrowthData',
+            'donationsByPurpose',
+            'recentMembers',
+            'recentDonations'
+        ));
     }
 }
