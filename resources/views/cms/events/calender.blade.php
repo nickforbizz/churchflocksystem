@@ -95,6 +95,14 @@
 
 @endsection
 
+@push('styles')
+<style>
+    /* Make calendar events have a pointer cursor on hover for better UX */
+    .fc-event {
+        cursor: pointer;
+    }
+</style>
+@endpush
 
 @push('scripts')
 
