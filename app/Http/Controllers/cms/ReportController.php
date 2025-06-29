@@ -5,7 +5,8 @@ namespace App\Http\Controllers\cms;
 use App\Exports\PostReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
-use App\Models\User;
+use App\Models\Member;
+use App\Models\Donation;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,19 +18,52 @@ class ReportController extends Controller
     public function index(Request $request, ReportService $reportService)
     {
         $selectedYear = $request->get('year', Carbon::now()->year);
-
+    
         try {
+            // 1. Posts Report
             $posts_report = $reportService->getCountByMonth(new Post, $selectedYear);
-            $users_report = $reportService->getCountByMonth(new User, $selectedYear);
+    
+            // 2. Membership Growth Report (using Member model is more accurate)
+            $members_report = $reportService->getCountByMonth(new Member, $selectedYear);
+    
+            // 3. Donations Report (sum of amounts)
+            $donationsByMonth = Donation::select(
+                DB::raw('MONTH(date) as month'),
+                DB::raw('SUM(amount) as total')
+            )
+            ->whereYear('date', $selectedYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month')->all();
+    
+            $donationsChartData = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $monthName = Carbon::create()->month($i)->format('F');
+                $donationsChartData[$monthName] = $donationsByMonth[$i] ?? 0;
+            }
+            $donationYears = Donation::select(DB::raw('YEAR(date) as year'))
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year')->toArray();
+    
+            // Combine all available years for the dropdown
+            $allYears = collect($posts_report['years'])
+                ->merge($members_report['years'])
+                ->merge($donationYears)
+                ->unique()
+                ->sortDesc()
+                ->values()
+                ->all();
+    
         } catch (\Throwable $th) {
             throw $th;
         }
         
         return view('cms.reports.index', [
             'postsChartData' => $posts_report['chartData'],
-            'postsYears' => $posts_report['years'],
-            'usersChartData' => $users_report['chartData'],
-            'usersYears' => $users_report['years'],
+            'membersChartData' => $members_report['chartData'],
+            'donationsChartData' => $donationsChartData,
+            'allYears' => $allYears,
             'selectedYear' => $selectedYear
         ]);
     }
@@ -37,24 +71,23 @@ class ReportController extends Controller
 
     public function downloadCsv(Request $request)
     {
-        $year = request('year', Carbon::now()->year);
-        $data = Post::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-                    ->whereYear('created_at', $year)
-                    ->groupBy('month')
-                    ->get();
-    
-        $chartData = [];
-        foreach ($data as $row) {
-            $month = Carbon::create(null, $row->month)->format('F');
-            $chartData[$month] = $row->count;
+        $year = $request->input('year', Carbon::now()->year);
+        $type = $request->input('type', 'posts');
+
+        // Note: This is a simplified example. For a real-world application,
+        // you would create separate Export classes for each report type.
+        if ($type == 'posts') {
+            $data = Post::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
+                        ->whereYear('created_at', $year)
+                        ->groupBy('month')
+                        ->get();
+            $export = new PostReportExport($data);
+            return Excel::download($export, 'posts_report_'.$year.'.xlsx');
         }
-    
-        $fileName = 'post_report_'.$year;
-    
-        $export = new PostReportExport($data);
-    
-        return Excel::download($export, $fileName.'.xlsx');
-    
+
+        // Add logic for other report types (members, donations) here...
+
+        return redirect()->back()->with('error', 'Download for this report type is not yet implemented.');
     }
 
 }
