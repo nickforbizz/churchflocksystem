@@ -96,8 +96,12 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        $request = $this->storeFeaturedImg($request);
-        $post = Post::create($request->all());
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['title']);
+
+        $request = $this->storeFeaturedImg($request); // This handles the image and adds 'featured_img' to the request
+        $data['featured_img'] = $request->featured_img;
+        $post = Post::create($data);
 
         if ($post) {
             return redirect()
@@ -134,8 +138,12 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $request = $this->storeFeaturedImg($request);
-        $post->update($request->all());
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['title']);
+
+        $request = $this->storeFeaturedImg($request, $post); // Pass post to handle old image deletion
+        $data['featured_img'] = $request->featured_img ?? $post->featured_img; // Keep old image if new one isn't uploaded
+        $post->update($data);
 
         // Redirect the post to the post's profile page
         return redirect()

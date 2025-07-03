@@ -74,18 +74,33 @@ class ReportController extends Controller
         $year = $request->input('year', Carbon::now()->year);
         $type = $request->input('type', 'posts');
 
-        // Note: This is a simplified example. For a real-world application,
-        // you would create separate Export classes for each report type.
-        if ($type == 'posts') {
-            $data = Post::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-                        ->whereYear('created_at', $year)
-                        ->groupBy('month')
-                        ->get();
-            $export = new PostReportExport($data);
-            return Excel::download($export, 'posts_report_'.$year.'.xlsx');
-        }
+        switch ($type) {
+            case 'posts':
+                $data = Post::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
+                            ->whereYear('created_at', $year)
+                            ->groupBy('month')
+                            ->get();
+                // Assumes PostReportExport exists
+                return Excel::download(new PostReportExport($data), 'posts_report_'.$year.'.xlsx');
 
-        // Add logic for other report types (members, donations) here...
+            case 'members':
+                $data = Member::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
+                            ->whereYear('created_at', $year)
+                            ->groupBy('month')
+                            ->get();
+                // TODO: Create MemberReportExport class
+                // return Excel::download(new MemberReportExport($data), 'membership_report_'.$year.'.xlsx');
+                break;
+
+            case 'donations':
+                $data = Donation::select(DB::raw('MONTH(date) as month'), DB::raw('SUM(amount) as total'))
+                            ->whereYear('date', $year)
+                            ->groupBy('month')
+                            ->get();
+                // TODO: Create DonationReportExport class
+                // return Excel::download(new DonationReportExport($data), 'donations_report_'.$year.'.xlsx');
+                break;
+        }
 
         return redirect()->back()->with('error', 'Download for this report type is not yet implemented.');
     }

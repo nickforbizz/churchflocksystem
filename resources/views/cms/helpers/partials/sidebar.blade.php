@@ -106,14 +106,14 @@
 				 <li class="nav-item @if(Route::is('posts.*') || 
 									Route::is('postCategories.*')  ) active 
 									@endif">
-					<a data-toggle="collapse" href="#submenu">
+					<a data-toggle="collapse" href="#submenu_post">
 						<i class="icon-docs"></i>
 						<p>Posts</p>
 						<span class="caret"></span>
 					</a>
 					<div class="@if( Route::is('posts.*') || 
 								     Route::is('postCategories.*') ) collapsed @else collapse @endif"
-						id="submenu">
+						id="submenu_post">
 						<ul class="nav nav-collapse">
 							<li class=" @if(Route::is('postCategories.*')) active @endif">
 								<a href="{{ route('postCategories.index') }}">
