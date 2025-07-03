@@ -12,11 +12,11 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-6">
-        <h2 data-aos="fade-up" data-aos-delay="100">Bettter digital experience with Presento</h2>
-        <p data-aos="fade-up" data-aos-delay="200">We are team of talented designers making websites with Bootstrap</p>
+        <h2 data-aos="fade-up" data-aos-delay="100">Empower Your Church with a Smarter Management System</h2>
+        <p data-aos="fade-up" data-aos-delay="200">Modern, Laravel-based platform that simplifies membership, events, donations, and communication—all from one powerful dashboard.</p>
         <div class="d-flex mt-4" data-aos="fade-up" data-aos-delay="300">
-          <a href="#about" class="btn-get-started">Get Started</a>
-          <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
+          <a href="#about" class="btn-get-started">Request Demo</a>
+          <a href="#" class="glightbox  d-flex align-items-center"><i class="bi bi-chevron-right"></i><span>See Features</span></a>
         </div>
 
       </div>
@@ -89,9 +89,9 @@
     <div class="row gy-5">
 
       <div class="content col-xl-5 d-flex flex-column" data-aos="fade-up" data-aos-delay="100">
-        <h3>Voluptatem dignissimos provident quasi</h3>
+        <h3>Built for Modern Churches – Simple, Secure, and Scalable</h3>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit
+          The Church Flock System is a comprehensive platform designed to support the administrative, financial, and communication needs of modern churches. Whether you're managing a small congregation or a large ministry, our system gives you the tools to stay organized and connected.
         </p>
         <a href="#" class="about-btn align-self-center align-self-xl-start"><span>About us</span> <i class="bi bi-chevron-right"></i></a>
       </div>
@@ -101,26 +101,26 @@
 
           <div class="col-md-6 icon-box position-relative">
             <i class="bi bi-briefcase"></i>
-            <h4><a href="" class="stretched-link">Corporis voluptates sit</a></h4>
-            <p>Consequuntur sunt aut quasi enim aliquam quae harum pariatur laboris nisi ut aliquip</p>
+            <h4><a href="" class="stretched-link">🎯 Intuitive Dashboard </a></h4>
+            <p>Gain insights at a glance with our user-friendly dashboard, designed for quick access to key metrics and information.</p>
           </div><!-- Icon-Box -->
 
           <div class="col-md-6 icon-box position-relative">
             <i class="bi bi-gem"></i>
-            <h4><a href="" class="stretched-link">Ullamco laboris nisi</a></h4>
-            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt</p>
+            <h4><a href="" class="stretched-link">🔐 Role-Based Access Control</a></h4>
+            <p>Ensure that the right people have access to the right information with our role-based access control features.</p>
           </div><!-- Icon-Box -->
 
           <div class="col-md-6 icon-box position-relative">
             <i class="bi bi-broadcast"></i>
-            <h4><a href="" class="stretched-link">Labore consequatur</a></h4>
-            <p>Aut suscipit aut cum nemo deleniti aut omnis. Doloribus ut maiores omnis facere</p>
+            <h4><a href="" class="stretched-link">📊 Data-Driven Reports</a></h4>
+            <p>Make informed decisions with our comprehensive reporting tools, providing insights into your church's activities and growth.</p>
           </div><!-- Icon-Box -->
 
           <div class="col-md-6 icon-box position-relative">
             <i class="bi bi-easel"></i>
-            <h4><a href="" class="stretched-link">Beatae veritatis</a></h4>
-            <p>Expedita veritatis consequuntur nihil tempore laudantium vitae denat pacta</p>
+            <h4><a href="" class="stretched-link">📬 Smart Communication Tools</a></h4>
+            <p>Streamline your church's communication with our integrated messaging and notification system.</p>
           </div><!-- Icon-Box -->
 
         </div>
