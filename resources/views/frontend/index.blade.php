@@ -15,8 +15,8 @@
         <h2 data-aos="fade-up" data-aos-delay="100">Empower Your Church with a Smarter Management System</h2>
         <p data-aos="fade-up" data-aos-delay="200">Modern, Laravel-based platform that simplifies membership, events, donations, and communication—all from one powerful dashboard.</p>
         <div class="d-flex mt-4" data-aos="fade-up" data-aos-delay="300">
-          <a href="#about" class="btn-get-started">Request Demo</a>
-          <a href="#" class="glightbox  d-flex align-items-center"><i class="bi bi-chevron-right"></i><span>See Features</span></a>
+          <a href="#about" class="btn-get-started me-4">Who are we</a>
+          <a href="#services" class="btn-get-started btn-outline"><span>See Features</span> <i class="bi bi-chevron-right"></i> </a>
         </div>
 
       </div>
@@ -186,25 +186,25 @@
       <li class="nav-item col-3">
         <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#tabs-tab-1">
           <i class="bi bi-binoculars"></i>
-          <h4 class="d-none d-lg-block">Modi sit est dela pireda nest</h4>
+          <h4 class="d-none d-lg-block">📊 Analytics</h4>
         </a>
       </li>
       <li class="nav-item col-3">
         <a class="nav-link" data-bs-toggle="tab" data-bs-target="#tabs-tab-2">
           <i class="bi bi-box-seam"></i>
-          <h4 class="d-none d-lg-block">Unde praesenti mara setra le</h4>
+          <h4 class="d-none d-lg-block">📅 Event Management</h4>
         </a>
       </li>
       <li class="nav-item col-3">
         <a class="nav-link" data-bs-toggle="tab" data-bs-target="#tabs-tab-3">
           <i class="bi bi-brightness-high"></i>
-          <h4 class="d-none d-lg-block">Pariatur explica nitro dela</h4>
+          <h4 class="d-none d-lg-block">📰 Content Management</h4>
         </a>
       </li>
       <li class="nav-item col-3">
         <a class="nav-link" data-bs-toggle="tab" data-bs-target="#tabs-tab-4">
           <i class="bi bi-command"></i>
-          <h4 class="d-none d-lg-block">Nostrum qui dile node</h4>
+          <h4 class="d-none d-lg-block">⚙️ System Management</h4>
         </a>
       </li>
     </ul><!-- End Tab Nav -->
@@ -214,22 +214,16 @@
       <div class="tab-pane fade active show" id="tabs-tab-1">
         <div class="row">
           <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-            <h3>Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.</h3>
-            <p class="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
-            </p>
+            <h3>Analytics</h3>
+            <p class="fst-italic">Gain insights into your community's engagement and growth.</p>
             <ul>
-              <li><i class="bi bi-check2-all"></i>
-                <spab>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</spab>
-              </li>
-              <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit</span>.</li>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Track membership growth month by month to understand your congregation's expansion.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Visualize donation trends with clear, monthly financial summaries.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Monitor content creation to see how actively your team is engaging the community.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Download reports in CSV format for offline analysis and record-keeping.</span></li>
             </ul>
             <p>
-              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-              culpa qui officia deserunt mollit anim id est laborum
+              Our analytics dashboard transforms your church's data into actionable insights, helping you make informed decisions for ministry planning and outreach.
             </p>
           </div>
           <div class="col-lg-6 order-1 order-lg-2 text-center">
@@ -241,21 +235,18 @@
       <div class="tab-pane fade" id="tabs-tab-2">
         <div class="row">
           <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-            <h3>Neque exercitationem debitis soluta quos debitis quo mollitia officia est</h3>
+            <h3>Event Management</h3>
             <p>
-              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-              culpa qui officia deserunt mollit anim id est laborum
+              Organize and manage church events with ease. Our event management system allows you to create, schedule, and promote events while keeping your congregation informed.
             </p>
             <p class="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
+              Simplify your event planning process and enhance participation with our user-friendly tools.
             </p>
             <ul>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Plan and schedule events effortlessly with our intuitive interface.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Promote events through automated email notifications and reminders.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Track RSVPs and manage attendee lists with ease.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Gather feedback post-event to improve future gatherings.</span></li>
             </ul>
           </div>
           <div class="col-lg-6 order-1 order-lg-2 text-center">
@@ -267,20 +258,17 @@
       <div class="tab-pane fade" id="tabs-tab-3">
         <div class="row">
           <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-            <h3>Voluptatibus commodi ut accusamus ea repudiandae ut autem dolor ut assumenda</h3>
+            <h3>Analytics Dashboard</h3>
             <p>
-              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-              culpa qui officia deserunt mollit anim id est laborum
+              Gain valuable insights into your church's activities and engagement through our comprehensive analytics dashboard. Track key metrics, visualize trends, and make data-driven decisions to enhance your ministry.
             </p>
             <ul>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Visualize donation trends with clear, monthly financial summaries.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Monitor content creation to see how actively your team is engaging the community.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Download reports in CSV format for offline analysis and record-keeping.</span></li>
             </ul>
             <p class="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
+              Make informed decisions to drive your ministry forward.
             </p>
           </div>
           <div class="col-lg-6 order-1 order-lg-2 text-center">
@@ -292,20 +280,18 @@
       <div class="tab-pane fade" id="tabs-tab-4">
         <div class="row">
           <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-            <h3>Omnis fugiat ea explicabo sunt dolorum asperiores sequi inventore rerum</h3>
+            <h3>Event Management</h3>
             <p>
-              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-              culpa qui officia deserunt mollit anim id est laborum
+              Simplify your event planning process and enhance participation with our user-friendly tools.
             </p>
             <p class="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
+              Make informed decisions to drive your ministry forward.
             </p>
             <ul>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Plan and schedule events effortlessly with our intuitive interface.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Promote events through automated email notifications and reminders.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Track RSVPs and manage attendee lists with ease.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Gather feedback post-event to improve future gatherings.</span></li>
             </ul>
           </div>
           <div class="col-lg-6 order-1 order-lg-2 text-center">
@@ -326,7 +312,7 @@
   <!-- Section Title -->
   <div class="container section-title" data-aos="fade-up">
     <h2>Services</h2>
-    <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+    <p>Everything You Need to Manage Your Church Efficiently</p>
   </div><!-- End Section Title -->
 
   <div class="container">
@@ -337,8 +323,8 @@
         <div class="service-item d-flex position-relative h-100">
           <i class="bi bi-briefcase icon flex-shrink-0"></i>
           <div>
-            <h4 class="title"><a href="service-details.html" class="stretched-link">Lorem Ipsum</a></h4>
-            <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+            <h4 class="title"><a href="service-details.html" class="stretched-link">🧍 Member & Group Management</a></h4>
+            <p class="description">Maintain detailed member records, organize into ministry groups, and easily communicate with each.</p>
           </div>
         </div>
       </div><!-- End Service Item -->
@@ -347,8 +333,8 @@
         <div class="service-item d-flex position-relative h-100">
           <i class="bi bi-card-checklist icon flex-shrink-0"></i>
           <div>
-            <h4 class="title"><a href="service-details.html" class="stretched-link">Dolor Sitema</a></h4>
-            <p class="description">Minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat tarad limino ata</p>
+            <h4 class="title"><a href="service-details.html" class="stretched-link">💰 Donations Tracking</a></h4>
+            <p class="description">Log, categorize, and report on contributions linked to specific members.</p>
           </div>
         </div>
       </div><!-- End Service Item -->
@@ -357,8 +343,8 @@
         <div class="service-item d-flex position-relative h-100">
           <i class="bi bi-bar-chart icon flex-shrink-0"></i>
           <div>
-            <h4 class="title"><a href="service-details.html" class="stretched-link">Sed ut perspiciatis</a></h4>
-            <p class="description">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+            <h4 class="title"><a href="service-details.html" class="stretched-link">📅 Event Management</a></h4>
+            <p class="description">Schedule and manage church events using an interactive calendar.</p>
           </div>
         </div>
       </div><!-- End Service Item -->
@@ -367,8 +353,8 @@
         <div class="service-item d-flex position-relative h-100">
           <i class="bi bi-binoculars icon flex-shrink-0"></i>
           <div>
-            <h4 class="title"><a href="service-details.html" class="stretched-link">Magni Dolores</a></h4>
-            <p class="description">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            <h4 class="title"><a href="service-details.html" class="stretched-link">📢 Announcements</a></h4>
+            <p class="description">Send targeted SMS and Email notifications to groups or the entire congregation.</p>
           </div>
         </div>
       </div><!-- End Service Item -->
@@ -377,8 +363,8 @@
         <div class="service-item d-flex position-relative h-100">
           <i class="bi bi-brightness-high icon flex-shrink-0"></i>
           <div>
-            <h4 class="title"><a href="service-details.html" class="stretched-link">Nemo Enim</a></h4>
-            <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
+            <h4 class="title"><a href="service-details.html" class="stretched-link">📰 Content Management</a></h4>
+            <p class="description">Share news, sermons, and blog posts directly from the system.</p>
           </div>
         </div>
       </div><!-- End Service Item -->
@@ -387,8 +373,8 @@
         <div class="service-item d-flex position-relative h-100">
           <i class="bi bi-calendar4-week icon flex-shrink-0"></i>
           <div>
-            <h4 class="title"><a href="service-details.html" class="stretched-link">Eiusmod Tempor</a></h4>
-            <p class="description">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi</p>
+            <h4 class="title"><a href="service-details.html" class="stretched-link">📈 Reports & Insights</a></h4>
+            <p class="description">Visualize growth trends, giving patterns, and content activity with exportable reports.</p>
           </div>
         </div>
       </div><!-- End Service Item -->
@@ -709,7 +695,7 @@
   <!-- Section Title -->
   <div class="container section-title" data-aos="fade-up">
     <h2>Frequently Asked Questions</h2>
-    <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+    <p> Here are some common questions about our platform.</p>
   </div><!-- End Section Title -->
 
   <div class="container">
@@ -721,49 +707,49 @@
         <div class="faq-container">
 
           <div class="faq-item faq-active">
-            <h3>Non consectetur a erat nam at lectus urna duis?</h3>
+            <h3>What is the purpose of this platform?</h3>
             <div class="faq-content">
-              <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.</p>
+              <p>This platform aims to provide a comprehensive solution for managing church activities, events, and community engagement.</p>
             </div>
             <i class="faq-toggle bi bi-chevron-right"></i>
           </div><!-- End Faq item-->
 
           <div class="faq-item">
-            <h3>Feugiat scelerisque varius morbi enim nunc faucibus?</h3>
+            <h3>How can I get involved?</h3>
             <div class="faq-content">
-              <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+              <p>You can get involved by signing up for our newsletter, attending events, and participating in community discussions.</p>
             </div>
             <i class="faq-toggle bi bi-chevron-right"></i>
           </div><!-- End Faq item-->
 
           <div class="faq-item">
-            <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
+            <h3>What features does this platform offer?</h3>
             <div class="faq-content">
-              <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis</p>
+              <p>Our platform offers a variety of features including event management, community engagement tools, and resource sharing. Users can create and manage events, communicate with members, and access a library of resources to support their ministry.</p>
             </div>
             <i class="faq-toggle bi bi-chevron-right"></i>
           </div><!-- End Faq item-->
 
           <div class="faq-item">
-            <h3>Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?</h3>
+            <h3>What is the purpose of this platform?</h3>
             <div class="faq-content">
-              <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+              <p>This platform aims to provide a comprehensive solution for managing church activities, events, and community engagement.</p>
             </div>
             <i class="faq-toggle bi bi-chevron-right"></i>
           </div><!-- End Faq item-->
 
           <div class="faq-item">
-            <h3>Tempus quam pellentesque nec nam aliquam sem et tortor?</h3>
+            <h3>How can I get support?</h3>
             <div class="faq-content">
-              <p>Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in</p>
+              <p>If you need support, you can reach out to our support team via the contact form on our website or by emailing support@example.com. We are here to help you with any questions or issues you may have.</p>
             </div>
             <i class="faq-toggle bi bi-chevron-right"></i>
           </div><!-- End Faq item-->
 
           <div class="faq-item">
-            <h3>Perspiciatis quod quo quos nulla quo illum ullam?</h3>
+            <h3>What is the mission of this platform?</h3>
             <div class="faq-content">
-              <p>Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed in suscipit sequi. Distinctio ipsam dolore et.</p>
+              <p>Our mission is to empower churches and communities by providing a platform that facilitates communication, collaboration, and resource sharing. We aim to support the growth and engagement of church communities through innovative technology.</p>
             </div>
             <i class="faq-toggle bi bi-chevron-right"></i>
           </div><!-- End Faq item-->
