@@ -75,6 +75,10 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">Event Attendance</h4>
+                        <a href="{{ route('events.index') }}" class="btn btn-primary btn-round ml-auto">
+                            <i class="flaticon-left-arrow-4 mr-2"></i>
+                            View Records
+                        </a>
                         @can('create event_attendance')
                         <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addAttendanceModal">
                             <i class="fa fa-plus"></i>

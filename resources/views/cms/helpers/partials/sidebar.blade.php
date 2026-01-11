@@ -33,7 +33,7 @@
 			</div>
 			<ul class="nav nav-primary">
 				<li class="nav-item @if(Route::currentRouteName() == 'cms') active @endif">
-					<a href="#dashboard">
+					<a href="{{ route('cms') }}">
 						<i class="fas fa-home"></i>
 						<p>Dashboard</p>
 					</a>

@@ -30,6 +30,9 @@ class GroupController extends Controller
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
                 })
+                ->addColumn('members_count', function ($row) {
+                    return $row->members()->count();
+                })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
@@ -53,7 +56,7 @@ class GroupController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'created_by', 'members_count'])
                 ->make(true);
         }
 

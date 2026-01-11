@@ -36,6 +36,8 @@
                 formData.set('recaptcha-response', token);
                 php_email_form_submit(thisForm, action, formData);
               })
+              console.log({action});
+              
             } catch(error) {
               displayError(thisForm, error);
             }
@@ -53,26 +55,34 @@
     fetch(action, {
       method: 'POST',
       body: formData,
-      headers: {'X-Requested-With': 'XMLHttpRequest'}
+      headers: {'Content-Type': 'application/json'}
     })
     .then(response => {
-      if( response.ok ) {
-        return response.text();
+      if(response.ok) {
+      return response.json();
       } else {
-        throw new Error(`${response.status} ${response.statusText} ${response.url}`); 
+        console.log(response);
+      throw new Error(`Request failed with status ${response.status} | ${response.message}`);
       }
     })
     .then(data => {
+      console.log("data");
+      console.log(data);
+      
       thisForm.querySelector('.loading').classList.remove('d-block');
-      if (data.trim() == 'OK') {
-        thisForm.querySelector('.sent-message').classList.add('d-block');
-        thisForm.reset(); 
-      } else {
-        throw new Error(data ? data : 'Form submission failed and no error message returned from: ' + action); 
-      }
+      
+      const message = data.message || 'Your message has been sent successfully!';
+      
+      thisForm.querySelector('.sent-message').innerHTML = message;
+      thisForm.querySelector('.sent-message').classList.add('d-block');
+      thisForm.reset();
     })
     .catch((error) => {
-      displayError(thisForm, error);
+      console.log("error");
+      console.log(error.message);
+      
+      thisForm.querySelector('.loading').classList.remove('d-block');
+      displayError(thisForm, error.message || 'An error occurred while sending your message. Please try again.');
     });
   }
 

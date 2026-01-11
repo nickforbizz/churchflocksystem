@@ -17,6 +17,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'powered_by' => env('POWERED_BY', 'ChurchFlock'),  // Default fallback if not in .env
+    'powered_by_url' => env('POWERED_BY_URL', 'https://supertechnomands.com'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

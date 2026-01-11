@@ -60,7 +60,7 @@
                                     <th>#</th>
                                     <th>Title</th>
                                     <th>Event Date</th>
-                                    <th>Description</th>
+                                    <th>Attending</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Action</th>
@@ -98,7 +98,7 @@
                     data: 'event_date'
                 },
                 {
-                    data: 'description'
+                    data: 'Attending'
                 },
                 {
                     data: 'created_by'
