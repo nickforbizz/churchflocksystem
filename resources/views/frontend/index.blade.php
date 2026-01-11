@@ -17,7 +17,7 @@
           Manage members, groups, events, attendance, giving, and communication — all in one secure platform.
         </p>
         <div class="d-flex mt-4" data-aos="fade-up" data-aos-delay="300">
-          <a href="#about" class="btn-get-started">Request a Demo</a>
+          <a href="#contact" class="btn-get-started">Request a Demo</a>
           <a href="#" class="glightbox btn-watch-video d-flex align-items-center">
             <i class="bi bi-play-circle"></i>
             <span>See How It Works</span>
@@ -229,5 +229,41 @@
 
 </section>
 <!-- /Services Section -->
+
+
+<!-- Contact us Section -->
+<section id="contact" class="contact section">
+
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Contact Us</h2>
+    <p>Have questions or feedback? Reach out to us!</p>
+  </div>
+
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+    <div class="row gy-4">
+
+      <div class="col-lg-6">
+        <div class="info-item d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-geo-alt"></i>
+          <h3>Our Address</h3>
+          <p>123 Church Street, City, Country</p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="info-item d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-envelope"></i>
+          <h3>Email Us</h3>
+          <p>info@churchflocksystem.com</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- /Contact us Section -->
 
 @endsection

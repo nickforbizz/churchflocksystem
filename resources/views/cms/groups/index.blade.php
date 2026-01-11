@@ -50,6 +50,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
+                                    <th> Count</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Action</th>
@@ -83,7 +84,9 @@
                 {
                     data: 'name',
                 },
-                
+                {
+                    data: 'members_count',
+                },
                 {
                     data: 'created_by'
                 },					

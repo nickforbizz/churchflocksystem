@@ -57,4 +57,10 @@ class Event extends Model
 	{
 		return $this->hasMany(EventAttendance::class);
 	}
+
+	// get total attendace in this event
+	public function totalAttendance()
+	{
+		return $this->event_attendances()->count();
+	}
 }

@@ -47,23 +47,18 @@
             </div>
         </div>
 
+
+
     <div class="row">             
         <div class="col-sm-12 mt-4">
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex align-items-center">
-                        <form method="GET" action="{{ route('events.downloadAttendanceCsv') }}" class="form-inline w-100">
-                            <select name="year" class="form-control mr-2" required>
-                                <option value="">Select Year</option>
-                                @for($year = now()->year; $year >= now()->year - 4; $year--)
-                                    <option value="{{ $year }}" @selected(request('year') == $year)>{{ $year }}</option>
-                                @endfor
-                            </select>
-                            <button type="submit" class="btn btn-primary btn-round ml-auto">
-                                <i class="flaticon-download"></i>
-                                Download Report
-                            </button>
-                        </form>
+                        <h4 class="card-title">Add Record</h4>
+                        <a href="{{ route('products.index') }}" class="btn btn-primary btn-round ml-auto">
+                            <i class="flaticon-left-arrow-4 mr-2"></i>
+                            View Records
+                        </a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -114,8 +109,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-             
+        </div>             
     </div>
     <!-- .row -->
      
@@ -150,7 +144,7 @@
         data: {
             labels: labelsScore,
             datasets: [{
-                label: 'Attendance (%)',
+                label: 'Attendance %',
                 data: scores
             }]
         },
@@ -158,13 +152,6 @@
             indexAxis: 'y',
             scales: {
                 x: { max: 100, beginAtZero: true }
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value) => value + '%',
-                    color: '#fff',
-                    font: { weight: 'bold' }
-                }
             }
         }
     });
@@ -186,38 +173,13 @@
                 { label: 'Excused', data: excusedData }
             ]
         },
-        // options: {
-        //     responsive: true,
-        //     scales: {
-        //         x: { stacked: true },
-        //         y: { stacked: true, beginAtZero: true }
-        //     }
-        // },
-        
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			legend: {
-				display: false,
-			},
-			scales: {
-				yAxes: [{
-					ticks: {
-						display: false //this will remove only the label
-					},
-					gridLines: {
-						drawBorder: false,
-						display: false
-					}
-				}],
-				xAxes: [{
-					gridLines: {
-						drawBorder: false,
-						display: false
-					}
-				}]
-			},
-		}
+        options: {
+            responsive: true,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            }
+        }
     });
     </script>
     <script>

@@ -106,8 +106,9 @@
       <div class="col-lg-4 col-md-12 footer-newsletter">
         <h4>Church Updates</h4>
         <p>Subscribe to receive product updates, feature releases, and church management tips.</p>
-        <form action="#" method="post" class="php-email-form">
+        <form action="{{ route('newsletter.subscribe') }}" method="post" class="php-email-form">
           <div class="newsletter-form">
+            {{ csrf_field() }}
             <input type="email" name="email" placeholder="Your email address">
             <input type="submit" value="Subscribe">
           </div>
@@ -138,7 +139,7 @@
   <i class="bi bi-arrow-up-short"></i>
 </a>
 
-<!-- Vendor JS Files -->
+<!-- Vendor JS Files --> 
 <script src="{{ asset('assets/frontend/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('assets/frontend/vendor/php-email-form/validate.js') }}"></script>
 <script src="{{ asset('assets/frontend/vendor/aos/aos.js') }}"></script>

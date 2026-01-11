@@ -1,8 +1,6 @@
 <?php
 
-use App\Events\UserRegistered;
 use App\Http\Controllers\cms\AnnouncementController;
-use App\Http\Controllers\cms\AssignRoleController;
 use App\Http\Controllers\cms\ChurchEventController;
 use App\Http\Controllers\cms\DonationController;
 use App\Http\Controllers\cms\EventAttendanceController;
@@ -14,15 +12,11 @@ use App\Http\Controllers\cms\UserController;
 use App\Http\Controllers\cms\PostCategoryController;
 use App\Http\Controllers\cms\PostController;
 use App\Http\Controllers\cms\ProductCategoryController;
-use App\Http\Controllers\cms\ProductController;
 use App\Http\Controllers\cms\ReportController;
 use App\Http\Controllers\cms\RoleController;
 use App\Http\Controllers\cms\SearchController;
 use App\Http\Controllers\frontend\ViewsController;
 use App\Http\Controllers\HomeController;
-use App\Models\Announcement;
-use App\Models\ChurchEvent;
-use App\Models\Event;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +58,10 @@ Route::get('/flush-perms', function () {
     Artisan::call('permission:cache-reset');
     return 'Permissions cache flushed successfully!';
 })->name('flush-perms');
+
+
+// newsletter
+Route::post('/newsletter/subscribe', [ViewsController::class, 'subscribeNewsletter'])->name('newsletter.subscribe');
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
@@ -110,21 +108,16 @@ Route::middleware('cms')->group(function () {
 
         'posts' => PostController::class,
         'postCategories' => PostCategoryController::class,
-        'products' => ProductController::class,
         'productCategories' => ProductCategoryController::class,
         'roles' => RoleController::class,
         'permissions' => PermissionController::class,
-        'assignRoles' => AssignRoleController::class,
         'reports' => ReportController::class,
         'notifications' => NotificationController::class,
     ]);
 
-    // CART Routes
-    Route::get('cart', [ProductsController::class, 'cart'])->name('cart');
-    Route::get('add-to-cart/{id}', [ProductsController::class, 'addToCart'])->name('addToCart');
-    Route::patch('update-cart', [ProductsController::class, 'updateCart'])->name('updateCart');
-    Route::delete('remove-from-cart', [ProductsController::class, 'removeCartItem'])->name('removeCartItem');
-
+    // downloadCalendarCsv
+    Route::get('/events/download-attendance-csv', [ChurchEventController::class, 'downloadAttendanceCsv'])->name('events.downloadAttendanceCsv');
+   
     Route::post('/notifications//mark-as-read', [NotificationController::class, 'markNotification'])->name('notifications.markNotification');
 });
 

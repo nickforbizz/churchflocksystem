@@ -41,6 +41,9 @@ class ChurchEventController extends Controller
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
                 })
+                ->addColumn('Attending', function ($row) {
+                    return $row->totalAttendance();
+                })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = $btn_view = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
@@ -73,7 +76,7 @@ class ChurchEventController extends Controller
 
                     return $btn_edit . $btn_view . $btn_del;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'Attending'])
                 ->make(true);
         }
 
@@ -250,5 +253,39 @@ class ChurchEventController extends Controller
         });
 
         return response()->json($events);
+    }
+
+    // Downloadable calendar events as CSV
+    public function downloadAttendanceCsv()
+    {
+        dd('eed');
+        $year = request('year', Carbon::now()->year);
+        $events = ChurchEvent::whereYear('event_date', $year)->get();
+        $filename = 'church_events_'.$year.'.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+        $callback = function () use ($events) {
+            $file = fopen('php://output', 'w');
+            // Add the header of the CSV
+            fputcsv($file, ['ID', 'Title', 'Description', 'Event Date', 'Location', 'Created By', 'Created At']);
+
+            foreach ($events as $event) {
+                fputcsv($file, [
+                    $event->id,
+                    $event->title,
+                    $event->description,
+                    $event->event_date ? $event->event_date->toDateString() : '',
+                    $event->location,
+                    $event->user->name ?? 'N/A',
+                    $event->created_at ? $event->created_at->toDateTimeString() : '',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

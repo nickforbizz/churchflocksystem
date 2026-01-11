@@ -24,13 +24,16 @@ class ReportController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
-        
+         $attendance = DB::table('vw_event_attendance_summary')->get();
+
+        //  dd($attendance);
         return view('cms.reports.index', [
             'postsChartData' => $posts_report['chartData'],
             'postsYears' => $posts_report['years'],
             'usersChartData' => $users_report['chartData'],
             'usersYears' => $users_report['years'],
-            'selectedYear' => $selectedYear
+            'selectedYear' => $selectedYear,
+            'attendance' => $attendance,
         ]);
     }
 

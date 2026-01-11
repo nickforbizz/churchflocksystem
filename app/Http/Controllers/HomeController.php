@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -40,6 +41,13 @@ class HomeController extends Controller
      */
     public function cms()
     {
-        return view('cms.index');
+         $event_attendance = DB::table('vw_event_participation_rate')->get();
+         $attendance = DB::table('vw_event_attendance_summary')->get();
+         $membership = DB::table('vw_group_membership_summary')->get();
+         $donations = DB::table('vw_donations_monthly_trend')->get();
+         $donations_summary = DB::table('vw_donations_summary')->get();
+
+        //  dd($event_attendance);
+        return view('cms.index', compact('attendance', 'membership', 'donations', 'donations_summary', 'event_attendance'));
     }
 }
