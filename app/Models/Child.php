@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class Child
  * 
  * @property int $id
+ * @property int $member_id
  * @property string|null $name
  * @property int|null $active
  * @property int $created_by
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
+ * @property Member $member
  * @property User $user
  *
  * @package App\Models
@@ -31,23 +33,25 @@ class Child extends Model
 	protected $table = 'children';
 
 	protected $casts = [
+		'member_id' => 'int',
 		'active' => 'int',
 		'created_by' => 'int'
 	];
 
 	protected $fillable = [
+		'member_id',
 		'name',
 		'active',
 		'created_by'
 	];
 
+	public function member()
+	{
+		return $this->belongsTo(Member::class);
+	}
+
 	public function user()
 	{
 		return $this->belongsTo(User::class, 'created_by');
-	}
-
-	public function members()
-	{
-		return $this->hasMany(Member::class);
 	}
 }

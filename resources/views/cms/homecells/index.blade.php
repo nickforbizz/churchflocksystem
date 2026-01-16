@@ -49,8 +49,10 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Name</th>
-                                    <th> Count</th>
+                                    <th> Name </th>
+                                    <th> Leader </th>
+                                    <th> Date Joined </th>
+                                    <th> Date Officially Received </th>
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Action</th>
@@ -82,10 +84,16 @@
                     name: 'DT_RowIndex'
                 },
                 {
-                    data: 'name',
+                    data: 'primary_cell',
                 },
                 {
-                    data: 'members_count',
+                    data: 'prayercell_leader',
+                },
+                {
+                    data: 'date_joined',
+                },
+                {
+                    data: 'date_officially_received',
                 },
                 {
                     data: 'created_by'

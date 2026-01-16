@@ -38,9 +38,9 @@
 
                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-xl-left">
                             <a class="dropdown-item" href="{{ route('groups.index') }}"> View Groups </a>
-                            <a class="dropdown-item" href="{{ route('ministries.create') }}"> View Ministries </a>
-                            <a class="dropdown-item" href="{{ route('homecells.create') }}"> View HomeCells </a>
-                            <a class="dropdown-item" href="{{ route('children.create') }}"> View Children </a>
+                            <a class="dropdown-item" href="{{ route('ministries.index') }}"> View Ministries </a>
+                            <a class="dropdown-item" href="{{ route('homecells.index') }}"> View HomeCells </a>
+                            <a class="dropdown-item" href="{{ route('children.index') }}"> View Children </a>
                         </div>
                     </div>
 
@@ -74,11 +74,9 @@
                                     <th>Names</th>
                                     <th>Phone</th>
                                     <th>Email</th>
-                                    <th>DOB</th>
-                                    <th>Marital Status</th>
                                     <th>Join Date</th>
                                     <th> Group </th>
-                                    <th>Created By</th>
+                                    <!-- <th>Created By</th> -->
                                     <th>Created At</th>
                                     <th>Action</th>
                                 </tr>
@@ -117,21 +115,21 @@
                 {
                     data: 'email'
                 },
-                {
-                    data: 'birth_date'
-                },
-                {
-                    data: 'marital_status'
-                },
+                // {
+                //     data: 'birth_date'
+                // },
+                // {
+                //     data: 'marital_status'
+                // },
                 {
                     data: 'join_date'
                 },
                 {
                     data: 'group_id',
                 },
-                {
-                    data: 'created_by'
-                },					
+                // {
+                //     data: 'created_by'
+                // },					
                 {
                     data: 'created_at',
                 },

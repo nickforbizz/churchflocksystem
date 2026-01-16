@@ -29,7 +29,10 @@ class HomecellRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:2|max:255',
+            'primary_cell' => 'required|min:2|max:255',
+            'prayercell_leader' => 'nullable|string|max:255',
+            'date_joined' => 'required|date',
+            'date_officially_received' => 'nullable|date',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
         ];

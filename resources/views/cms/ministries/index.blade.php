@@ -50,7 +50,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
-                                    <th> Count</th>
+                                    <th> Total Members</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Action</th>

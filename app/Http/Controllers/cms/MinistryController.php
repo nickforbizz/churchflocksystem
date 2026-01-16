@@ -5,6 +5,7 @@ namespace App\Http\Controllers\cms;
 use App\Http\Controllers\Controller;
 use App\Models\Ministry;
 use App\Http\Requests\MinistryRequest;
+use App\Models\MemberHasMinistry;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,7 @@ class MinistryController extends Controller
                     return $row->user->name ?? 'N/A';
                 })
                 ->addColumn('members_count', function ($row) {
-                    return $row->members()->count();
+                    return $row->membersCount();
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;

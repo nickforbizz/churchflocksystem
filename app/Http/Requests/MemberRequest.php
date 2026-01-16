@@ -41,6 +41,7 @@ class MemberRequest extends FormRequest
             'marital_status' => 'nullable|string|max:50',
             'join_date' => 'nullable|date',
             'group_id' => 'required|exists:groups,id',
+            'homecell_id' => 'nullable|exists:homecells,id',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
         ];

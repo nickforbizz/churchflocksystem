@@ -25,13 +25,26 @@ class HomecellController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($row) {
-                    return date_format($row->created_at, 'Y/m/d H:i');
+                    // check date is not null
+                    if ($row->created_at) {
+                        return date_format($row->created_at, 'Y/m/d H:i');
+                    }
+                    return 'N/A';
+                })
+                ->editColumn('date_joined', function ($row) {
+                    if ($row->date_joined) {
+                        return date_format($row->date_joined, 'Y/m/d H:i');
+                    }
+                    return 'N/A';
+                })
+                ->editColumn('date_officially_received', function ($row) {
+                    if (!$row->date_officially_received) {
+                        return 'N/A';
+                    }
+                    return date_format($row->date_officially_received, 'Y/m/d H:i');
                 })
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
-                })
-                ->addColumn('members_count', function ($row) {
-                    return $row->members()->count();
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
@@ -56,7 +69,7 @@ class HomecellController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action', 'created_by', 'members_count'])
+                ->rawColumns(['action', 'created_by'])
                 ->make(true);
         }
 
