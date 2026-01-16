@@ -32,7 +32,7 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">Add|Edit Record</h4>
-                        <a href="{{ route('members.index') }}" class="btn btn-primary btn-round ml-auto">
+                        <a href="{{ route('members.index') }}" class="btn btn-sm btn-primary btn-round ml-auto">
                             <i class="flaticon-left-arrow-4 mr-2"></i>
                             View Records
                         </a>
@@ -166,7 +166,44 @@
                                 </div>
                             </div>
 
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="ministries"> Ministries </label>
+                                    <select name="ministries[]" id="ministry" multiple="multiple" class="form-control select2">
+                                        @forelse($ministries as $ministry)
+                                            <option value="{{ $ministry->name }}" @if(in_array($ministry->name, $member_ministries)) selected @endif > {{ $ministry->name }} </option>
+                                        @empty
+                                            <option selected disabled> -- No item -- </option> 
+                                        @endforelse
+                                    </select>
+                                    <input type="checkbox" id="select2_checkAll" >Select All<br>
 
+                                    
+                                    @error('ministries') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <!-- .row -->
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="homecell_id">HomeCell</label>
+                                    <select name="homecell_id" id="homecell_id" class="form-control @error('homecell_id') is-invalid @enderror">
+                                        <option value="">-- Select HomeCell --</option>
+                                        @forelse($homecells as $homecell)
+                                        <option value="{{ $homecell->id }}" {{ old('homecell_id', $member->homecell_id ?? '') == $homecell->id ? 'selected' : '' }}> {{ $homecell->primary_cell }} </option>
+                                        @empty
+                                        <option disabled> -- No groups available -- </option>
+                                        @endforelse
+                                    </select>
+                                    @error('homecell_id') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
 
 
@@ -192,7 +229,15 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-
+        $("#select2_checkAll").click(function() {
+				if ($("#select2_checkAll").is(':checked')) {
+					$("#ministry > option").prop("selected", "selected");
+					$("#ministry").trigger("change");
+				} else {
+					$("#ministry > option").removeAttr("selected");
+					$("#ministry").val('').trigger("change");
+				}
+			});
     });
 </script>
 

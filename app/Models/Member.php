@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Mix;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -45,6 +46,7 @@ class Member extends Model
 		'birth_date' => 'date',
 		'join_date' => 'date',
 		'group_id' => 'int',
+		'homecell_id' => 'int',
 		'created_by' => 'int',
 		'active' => 'int'
 	];
@@ -57,6 +59,7 @@ class Member extends Model
 		'marital_status',
 		'join_date',
 		'group_id',
+		'homecell_id',
 		'created_by',
 		'active'
 	];
@@ -69,6 +72,11 @@ class Member extends Model
 	public function group()
 	{
 		return $this->belongsTo(Group::class);
+	}
+
+	public function homecell()
+	{
+		return $this->belongsTo(Homecell::class);
 	}
 
 	public function donations()
@@ -91,4 +99,11 @@ class Member extends Model
     {
         return $this->phone; // Assuming 'phone' column exists for SMS
     }
+
+	
+
+	public function ministries()
+	{
+		return $this->belongsToMany(Ministry::class, 'member_has_ministries');
+	}
 }

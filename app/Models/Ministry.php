@@ -50,4 +50,10 @@ class Ministry extends Model
 	{
 		return $this->hasMany(Member::class);
 	}
+
+	// get members count in this member_has_ministries table
+	public function membersCount()
+	{
+		return $this->hasMany(MemberHasMinistry::class, 'ministry_id')->count();
+	}
 }

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberRequest;
 use App\Models\Member;
 use App\Models\Group;
+use App\Models\Homecell;
+use App\Models\Ministry;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Cache;
@@ -92,6 +94,18 @@ class MemberController extends Controller
             return Group::where('active', 1)->get();
         });
 
+        // homecells
+        $homecells = Cache::remember('Homecell_all', 60, function () {
+            return Homecell::where('active', 1)->get();
+        });
+
+        // ministries
+        $ministries = Cache::remember('Ministry_all', 60, function () {
+            return Ministry::where('active', 1)->get();
+        });
+
+        $member_ministries = [];
+
         // Check if the user has permission to create members
         if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create member'))) {
             return redirect()->route('members.index')->with('error', 'You do not have permission to create members.');
@@ -107,7 +121,7 @@ class MemberController extends Controller
 
 
 
-        return view('cms.members.create', compact('groups'));
+        return view('cms.members.create', compact('groups', 'homecells', 'ministries', 'member_ministries'));
     }
 
     /**
@@ -123,6 +137,13 @@ class MemberController extends Controller
 
         if(!Member::create($request->validated())){
             return redirect()->back()->with('error', 'Failed to create record. Please try again.');
+        }
+
+        // add ministries
+        if ($request->has('ministries')) {
+            $member = Member::latest()->first();
+            $ministryIds = Ministry::whereIn('name', $request->input('ministries'))->pluck('id')->toArray();
+            $member->ministries()->attach($ministryIds);
         }
 
         return redirect()->back()->with('success', 'Record Created Successfully');
@@ -149,7 +170,22 @@ class MemberController extends Controller
         $groups = Cache::remember('Group_all', 60, function () {
             return Group::where('active', 1)->get();
         });
-        return view('cms.members.create', compact('member', 'groups'));
+
+        // Get homecells from cache
+        $homecells = Cache::remember('Homecell_all', 60, function () {
+            return Homecell::where('active', 1)->get();
+        });
+
+        // ministries
+        $ministries = Cache::remember('Ministry_all', 60, function () {
+            return Ministry::where('active', 1)->get();
+        });
+
+        $member_ministries = [];
+
+
+        $member_ministries = $member->ministries()->pluck('name')->toArray();
+        return view('cms.members.create', compact('member', 'groups', 'homecells', 'ministries', 'member_ministries'));
     }
 
     /**
@@ -164,6 +200,14 @@ class MemberController extends Controller
 
         if(!$member->update($request->validated())){
             return redirect()->back()->with('error', 'Failed to update record. Please try again.');
+        }
+
+        // Add or sync ministries
+        if ($request->has('ministries')) {
+            $ministryIds = Ministry::whereIn('name', $request->input('ministries'))->pluck('id')->toArray();
+            $member->ministries()->sync($ministryIds);
+        } else {
+            $member->ministries()->detach();
         }
 
         // Clear the cache for members

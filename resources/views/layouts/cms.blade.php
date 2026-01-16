@@ -33,7 +33,16 @@
 
 	<link rel="stylesheet" href="{{ asset('assets/css/cms.css') }}">
 
-
+		<style>
+			.btn-primary:active{
+				color: white;
+			}
+			.btn-primary:hover{
+				background-color: #4ea0f7ff;
+				color: white;
+				scale: 1.1;
+			}
+		</style>
 	
 
 

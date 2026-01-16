@@ -56,11 +56,36 @@
 
 
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name" class="placeholder"> Name </label>
-                                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Enter Full Name" name="name" value="{{ old('name', $homecell->name ?? '') }}" required />
-                                    @error('name') <span class="text-danger">{{ $message }}</span>
+                                    <label for="primary_cell" class="placeholder"> Primary Cell </label>
+                                    <input id="primary_cell" type="text" class="form-control @error('primary_cell') is-invalid @enderror" placeholder="Enter Primary Cell" name="primary_cell" value="{{ old('primary_cell', $homecell->primary_cell ?? '') }}" required />
+                                    @error('primary_cell') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="prayercell_leader" class="placeholder"> Leader of Prayer Cell </label>
+                                    <input id="prayercell_leader" type="text" class="form-control @error('prayercell_leader') is-invalid @enderror" placeholder="Enter Leader of Prayer Cell" name="prayercell_leader" value="{{ old('prayercell_leader', $homecell->prayercell_leader ?? '') }}" required />
+                                    @error('prayercell_leader') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="date_joined" class="placeholder"> Date Joined </label>
+                                    <input id="date_joined" type="date" class="form-control @error('date_joined') is-invalid @enderror" placeholder="Enter Date Joined" name="date_joined" value="{{ old('date_joined', $homecell->date_joined ?? '') }}" required />
+                                    @error('date_joined') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="date_officially_received" class="placeholder"> Date Officially Received </label>
+                                    <input id="date_officially_received" type="date" class="form-control @error('date_officially_received') is-invalid @enderror" placeholder="Enter Date Officially Received" name="date_officially_received" value="{{ old('date_officially_received', $homecell->date_officially_received ?? '') }}" required />
+                                    @error('date_officially_received') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
