@@ -56,12 +56,12 @@
 				@endif
 
 
-				<li class="nav-item @if(Route::is('groups.*')) active @endif">
+				<!-- <li class="nav-item @if(Route::is('groups.*')) active @endif">
 					<a href="{{ route('groups.index') }}">
 						<i class="far icon-layers"></i>
 						<p> Groups </p>
 					</a>
-				</li>
+				</li> -->
 
 
 				<li class="nav-item @if(Route::is('members.*')) active @endif">
@@ -70,6 +70,7 @@
 						<p> Members </p>
 					</a>
 				</li>
+				
 
 
 				<li class="nav-item @if(Route::is('events.*')) active @endif">
@@ -103,17 +104,17 @@
 
 
 				<!-- have posts routes, categories and posts -->
-				 <li class="nav-item @if(Route::is('posts.*') || 
+				 <!-- <li class="nav-item @if(Route::is('posts.*') || 
 									Route::is('postCategories.*')  ) active 
 									@endif">
-					<a data-toggle="collapse" href="#submenu">
+					<a data-toggle="collapse" href="#postsMenu">
 						<i class="icon-docs"></i>
 						<p>Posts</p>
 						<span class="caret"></span>
 					</a>
 					<div class="@if( Route::is('posts.*') || 
 								     Route::is('postCategories.*') ) collapsed @else collapse @endif"
-						id="submenu">
+						id="postsMenu">
 						<ul class="nav nav-collapse">
 							<li class=" @if(Route::is('postCategories.*')) active @endif">
 								<a href="{{ route('postCategories.index') }}">
@@ -128,7 +129,7 @@
 							</li>
 						</ul>
 					</div>
-				</li>
+				</li> -->
 
 				
 
@@ -144,7 +145,7 @@
 									Route::is('permissions.*') ||
 									 Route::is('notifications.*') ) active 
 									@endif">
-					<a data-toggle="collapse" href="#submenu">
+					<a data-toggle="collapse" href="#systemParams">
 						<i class="fas fa-cog"></i>
 						<p>System Parameters</p>
 						<span class="caret"></span>
@@ -152,7 +153,7 @@
 					<div class="@if( Route::is('roles.*') || 
 								     Route::is('permissions.*') ||
 									 Route::is('notifications.*') ) collapsed @else collapse @endif"
-						id="submenu">
+						id="systemParams">
 						<ul class="nav nav-collapse">
 							<li>
 								<a data-toggle="collapse" href="#subnav2">

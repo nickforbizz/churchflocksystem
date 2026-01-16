@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\cms\AnnouncementController;
+use App\Http\Controllers\cms\ChildController;
 use App\Http\Controllers\cms\ChurchEventController;
 use App\Http\Controllers\cms\DonationController;
 use App\Http\Controllers\cms\EventAttendanceController;
 use App\Http\Controllers\cms\GroupController;
+use App\Http\Controllers\cms\HomecellController;
 use App\Http\Controllers\cms\MemberController;
+use App\Http\Controllers\cms\MinistryController;
 use App\Http\Controllers\cms\NotificationController;
 use App\Http\Controllers\cms\PermissionController;
 use App\Http\Controllers\cms\UserController;
@@ -100,6 +103,9 @@ Route::middleware('cms')->group(function () {
         'users' => UserController::class,
         'members' => MemberController::class,
         'groups' => GroupController::class,
+        'homecells' => HomecellController::class,
+        'ministries' => MinistryController::class,
+        'children' => ChildController::class,
         'events' => ChurchEventController::class,
         'eventAttendance' => EventAttendanceController::class,
         'donations' => DonationController::class,

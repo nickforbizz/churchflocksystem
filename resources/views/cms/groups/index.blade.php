@@ -33,9 +33,9 @@
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">List of Available Record(s)</h4>
                         @can('create group')
-                        <a href="{{ route('groups.create') }}" class="btn btn-primary btn-round ml-auto" >
+                        <a href="{{ route('groups.create') }}" class="btn btn-sm btn-primary btn-round ml-auto" >
                             <i class="flaticon-add mr-2"></i>
-                            Add Row
+                            Add new Group
                         </a> 
                         @endcan
                     </div>
