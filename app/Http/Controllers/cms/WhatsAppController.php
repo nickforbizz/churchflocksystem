@@ -6,6 +6,7 @@ use Exception;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Twilio\TwiML\MessagingResponse;
 
 class WhatsAppController extends Controller
 {
@@ -36,4 +37,25 @@ class WhatsAppController extends Controller
             return back()->with(['error' => $e->getMessage()]);
         }
     }
+
+
+    public function handleInboundMessage(Request $request)
+    {
+        $incomingMsg = strtolower(trim($request->input('Body')));
+        $response = new MessagingResponse();
+
+        // Tailored response logic
+        if ($incomingMsg == 'hello') {
+            $response->message("Hi there! Welcome to our 2026 automated service.");
+        } elseif ($incomingMsg == 'status') {
+            $response->message("All systems are currently operational.");
+        } else {
+            $response->message("Sorry, I didn't understand that. Try 'hello' or 'status'.");
+        }
+
+        return response($response)->header('Content-Type', 'text/xml');
+    }
 }
+
+
+

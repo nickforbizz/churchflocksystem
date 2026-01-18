@@ -30,7 +30,7 @@ class SendWhatsAppJob implements ShouldQueue
             return;
         }
 
-        $formattedMessage = "Hello {$this->name}, {$this->message}";
+        $formattedMessage = "Hello {$this->name}, \n {$this->message}";
         
         // Use your existing controller logic or a dedicated Service class
         $whatsAppController = new WhatsAppController();
