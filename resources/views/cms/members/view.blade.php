@@ -132,10 +132,10 @@
                                     <label class="info-label">Date of Birth</label>
                                     <p class="info-text">
                                         @if($member->birth_date)
-                                            {{ $member->birth_date->format('Y-m-d') }}
-                                            <span class="badge badge-info ml-2">{{ $member->birth_date->age }} years</span>
+                                        {{ $member->birth_date->format('Y-m-d') }}
+                                        <span class="badge badge-info ml-2">{{ $member->birth_date->age }} years</span>
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -180,11 +180,11 @@
                                     <label class="info-label">Spouse/Next of Kin Phone</label>
                                     <p class="info-text">
                                         @if($member->spouse_number || $member->next_of_kin_number)
-                                            <a href="tel:{{ $member->spouse_number ?? $member->next_of_kin_number }}">
-                                                {{ $member->spouse_number ?? $member->next_of_kin_number }}
-                                            </a>
+                                        <a href="tel:{{ $member->spouse_number ?? $member->next_of_kin_number }}">
+                                            {{ $member->spouse_number ?? $member->next_of_kin_number }}
+                                        </a>
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -240,9 +240,9 @@
                                     <label class="info-label">Join Date</label>
                                     <p class="info-text">
                                         @if($member->join_date)
-                                            {{ $member->join_date->format('Y-m-d') }}
+                                        {{ $member->join_date->format('Y-m-d') }}
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -252,11 +252,71 @@
                                     <label class="info-label">Official Join Date</label>
                                     <p class="info-text">
                                         @if($member->official_join_date)
-                                            {{ $member->official_join_date->format('Y-m-d') }}
+                                        {{ $member->official_join_date->format('Y-m-d') }}
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!-- Children Section -->
+                                <div class="card mb-4 p-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <h5 class="card-subtitle" style="color: #2e3338; font-weight: 600; margin-bottom: 0;">Children</h5>
+                                        <button type="button" class="btn btn-sm btn-primary ml-auto" data-toggle="modal" data-target="#addChildModal">
+                                            <i class="fa fa-plus mr-2"></i>
+                                            Add Child
+                                        </button>
+                                    </div>
+                                    @if($member->children->count() > 0)
+                                    <div class="table-responsive">
+                                        
+                                        <table class="table table-sm table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Status</th>
+                                                    <th>Added Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($member->children as $child)
+                                                <tr>
+                                                    <td>{{ $child->name ?? 'N/A' }}</td>
+                                                    <td>
+                                                        @if($child->active)
+                                                        <span class="badge badge-success">Active</span>
+                                                        @else
+                                                        <span class="badge badge-warning">Inactive</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($child->created_at)
+                                                        {{ $child->created_at->format('Y-m-d') }}
+                                                        @else
+                                                        N/A
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    @else
+                                    <div class="alert alert-info">
+                                        No children records available for this member.
+                                        <!-- add child button -->
+                                        <!-- <div class="mt-2">
+                                            <a href="{{ route('children.create', $member->id) }}" class="btn btn-sm btn-primary">
+                                                <i class="fa fa-plus mr-2"></i>
+                                                Add Child
+                                            </a>
+                                        </div> -->
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -273,9 +333,9 @@
                                     <label class="info-label">Born Again</label>
                                     <p class="info-text">
                                         @if($member->born_again)
-                                            <span class="badge badge-success">Yes</span>
+                                        <span class="badge badge-success">Yes</span>
                                         @else
-                                            <span class="badge badge-secondary">No</span>
+                                        <span class="badge badge-secondary">No</span>
                                         @endif
                                     </p>
                                 </div>
@@ -285,9 +345,9 @@
                                     <label class="info-label">When Spirit Filled </label>
                                     <p class="info-text">
                                         @if($member->spirit_filled_when)
-                                            {{ $member->spirit_filled_when->format('Y-m-d') }}
+                                        {{ $member->spirit_filled_when->format('Y-m-d') }}
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -299,9 +359,9 @@
                                     <label class="info-label">When Water Immersed </label>
                                     <p class="info-text">
                                         @if($member->water_immersed_when)
-                                            {{ $member->water_immersed_when->format('Y-m-d') }}
+                                        {{ $member->water_immersed_when->format('Y-m-d') }}
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -311,9 +371,9 @@
                                     <label class="info-label">Status</label>
                                     <p class="info-text">
                                         @if($member->active)
-                                            <span class="badge badge-success">Active</span>
+                                        <span class="badge badge-success">Active</span>
                                         @else
-                                            <span class="badge badge-danger">Inactive</span>
+                                        <span class="badge badge-danger">Inactive</span>
                                         @endif
                                     </p>
                                 </div>
@@ -352,11 +412,11 @@
                                     <label class="info-label">Pastor Phone</label>
                                     <p class="info-text">
                                         @if($member->from_church_pastor_number)
-                                            <a href="tel:{{ $member->from_church_pastor_number }}">
-                                                {{ $member->from_church_pastor_number }}
-                                            </a>
+                                        <a href="tel:{{ $member->from_church_pastor_number }}">
+                                            {{ $member->from_church_pastor_number }}
+                                        </a>
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -374,7 +434,7 @@
                             <div class="col-md-12">
                                 <div>
                                     @foreach($member->ministries as $ministry)
-                                        <span class="badge badge-info mr-2 mb-2">{{ $ministry->name }}</span>
+                                    <span class="badge badge-info mr-2 mb-2">{{ $ministry->name }}</span>
                                     @endforeach
                                 </div>
                             </div>
@@ -399,9 +459,9 @@
                                     <label class="info-label">Created At</label>
                                     <p class="info-text">
                                         @if($member->created_at)
-                                            {{ $member->created_at->format('Y-m-d H:i') }}
+                                        {{ $member->created_at->format('Y-m-d H:i') }}
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -413,9 +473,9 @@
                                     <label class="info-label">Last Updated</label>
                                     <p class="info-text">
                                         @if($member->updated_at)
-                                            {{ $member->updated_at->format('Y-m-d H:i') }}
+                                        {{ $member->updated_at->format('Y-m-d H:i') }}
                                         @else
-                                            N/A
+                                        N/A
                                         @endif
                                     </p>
                                 </div>
@@ -434,17 +494,17 @@
                     <!-- Action Buttons Section -->
                     <div class="mt-4">
                         @if(auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $member->created_by)
-                            <a href="{{ route('members.edit', $member->id) }}" class="btn btn-primary">
-                                <i class="fa fa-edit mr-2"></i>
-                                Edit Member
-                            </a>
+                        <a href="{{ route('members.edit', $member->id) }}" class="btn btn-primary">
+                            <i class="fa fa-edit mr-2"></i>
+                            Edit Member
+                        </a>
                         @endif
 
                         @if(auth()->user()->hasRole('superadmin'))
-                            <button type="button" class="btn btn-danger" onclick="if(confirm('Are you sure you want to delete this member?')) { delMember('{{ $member->id }}', '{{ route('members.destroy', $member->id) }}'); }">
-                                <i class="fa fa-trash mr-2"></i>
-                                Delete Member
-                            </button>
+                        <button type="button" class="btn btn-danger" onclick="if(confirm('Are you sure you want to delete this member?')) { delMember('{{ $member->id }}', '{{ route('members.destroy', $member->id) }}'); }">
+                            <i class="fa fa-trash mr-2"></i>
+                            Delete Member
+                        </button>
                         @endif
 
                         <a href="{{ route('members.index') }}" class="btn btn-secondary">
@@ -457,6 +517,49 @@
         </div>
     </div>
     <!-- .row -->
+
+
+    <!-- Add Child Modal -->
+<div class="modal fade" id="addChildModal" tabindex="-1" role="dialog" aria-labelledby="addChildModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addChildModalLabel">Add Child for {{ $member->full_name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addChildForm">
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" name="member_id" value="{{ $member->id }}">
+                    <input type="hidden" name="created_by" value="{{ auth()->id() }}">
+                    
+                    <div class="form-group">
+                        <label for="childName" class="placeholder">Child Name *</label>
+                        <input type="text" class="form-control" id="childName" name="name" placeholder="Enter child name" required>
+                        <span class="text-danger" id="childNameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="childActive">Status</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="childActive" name="active" value="1" checked>
+                            <label class="custom-control-label" for="childActive">Active</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save mr-2"></i>
+                        Add Child
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </div>
 <!-- .page-inner -->
 @endsection
@@ -487,7 +590,53 @@
     }
 
     $(document).ready(function() {
-        // Add any additional initialization here
+        // Add Child Form Submission
+        $('#addChildForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                member_id: $('input[name="member_id"]').val(),
+                name: $('input[name="name"]').val(),
+                active: $('input[name="active"]').is(':checked') ? 1 : 0,
+                created_by: $('input[name="created_by"]').val(),
+                _token: $('input[name="_token"]').val()
+            };
+
+            $.ajax({
+                url: "{{ route('children.store') }}",
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        // Show success message
+                        alert('Child added successfully');
+                        
+                        // Reset form
+                        $('#addChildForm')[0].reset();
+                        
+                        // Close modal
+                        $('#addChildModal').modal('hide');
+                        
+                        // Reload page to show new child
+                        setTimeout(function() {
+                            location.reload();
+                        }, 500);
+                    } else {
+                        alert(response.message || 'Failed to add child');
+                    }
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(errors);
+                    if (errors && errors.name) {
+                        $('#childNameError').text(errors.name[0]);
+                    } else {
+                        alert('An error occurred while adding the child.');
+                    }
+                }
+            });
+        });
     });
 </script>
 @endpush

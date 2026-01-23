@@ -91,9 +91,23 @@ class ChildController extends Controller
         }
 
         if (!Child::create($request->validated())) {
+            if($request->ajax()){
+                return response()->json([
+                    'code' => -1,
+                    'success' => false,
+                    'msg' => 'Failed to create record. Please try again.'
+                ], 422, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+            }   
             return redirect()->back()->with('error', 'Failed to create record. Please try again.');
         }
 
+        if($request->ajax()){
+            return response()->json([
+                'code' => 1,
+                'success' => true,
+                'msg' => 'Record Created Successfully'
+            ], 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
         return redirect()->back()->with('success', 'Record Created Successfully');
     }
 
