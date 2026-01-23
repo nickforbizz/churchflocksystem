@@ -15,6 +15,9 @@ use App\Models\Group; // Added for sendToGroups
 use App\Http\Requests\AnnouncementRequest;
 use DataTables;
 use App\Jobs\SendAnnouncementToGroupMembers; // Added for sendToGroups
+use App\Jobs\SendSmsJob;
+use App\Jobs\SendWhatsAppJob;
+use Illuminate\Support\Facades\Bus;
 
 class AnnouncementController extends Controller
 {
@@ -29,7 +32,7 @@ class AnnouncementController extends Controller
         });
         if ($request->ajax()) {
             return Datatables::of($data)
-                ->addIndexColumn()              
+                ->addIndexColumn()
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
                 })
@@ -103,7 +106,7 @@ class AnnouncementController extends Controller
             return redirect()->route('announcements.index')->with('error', 'You do not have permission to create announcements.');
         }
 
-        
+
         return view('cms.announcements.create');
     }
 
@@ -133,7 +136,7 @@ class AnnouncementController extends Controller
 
         if ($request->wantsJson()) {
             return response()
-            ->json($announcement, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+                ->json($announcement, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
         }
 
         // Fetch active groups for the "Send to Groups" modal.
@@ -141,8 +144,6 @@ class AnnouncementController extends Controller
         $groups = Group::where('active', 1)->orderBy('name')->get();
 
         return view('cms.announcements.view', compact('announcement', 'groups'));
-
-        
     }
 
     /**
@@ -218,26 +219,89 @@ class AnnouncementController extends Controller
             return redirect()->back()->with('error', 'You do not have permission to send announcements to groups.');
         }
 
+
         $request->validate([
             'group_ids' => 'required|array|min:1',
             'group_ids.*' => 'exists:groups,id',
             'send_via' => 'required|array|min:1',
-            'send_via.*' => 'in:email,sms',
+            'send_via.*' => 'in:email,sms,whatsapp',
         ]);
 
         $groupIds = $request->input('group_ids');
         $sendVia = $request->input('send_via');
         $message = $request->input('message');
 
-        $syncData = array_fill_keys($groupIds, ['created_by' => auth()->id()]);
-        // Sync the groups with the announcement, providing the extra pivot data.
-        // This assumes you have a pivot table (e.g., announcement_group) with a 'created_by' column.
-        $announcement->groups()->sync($syncData);
 
-        dispatch(new SendAnnouncementToGroupMembers($announcement, $groupIds, $sendVia, $message))
-            ->onQueue('announcements') // Specify the queue name if you have a specific queue for announcements
-            ->delay(now()->addSeconds(5)); // Optional: delay the job by 5 seconds
+        $brodcast = null;
+        if (in_array('whatsapp', $sendVia)) {
+            $brodcast = $this->broadcastToGroups($groupIds, $message, 'whatsapp');
+        }
+
+        // for bulk sms
+        if(in_array('sms', $sendVia)){
+            $brodcast = $this->broadcastToGroups($groupIds, $message, 'sms');
+        }
 
         return redirect()->back()->with('success', 'Announcement sending process initiated. Members will receive notifications shortly.');
+    }
+
+
+    private function formatPhoneNumber($phone)
+    {
+        // Ensure the phone number starts with +254
+        if (strpos($phone, '+254') !== 0) {
+            $phone = '+254' . ltrim($phone, '0');
+        }
+        return $phone;
+    }
+
+
+    public function broadcastToGroups(array $groupIds, $message, $gateway_type)
+    {
+        $jobs = [];
+
+        foreach ($groupIds as $groupId) {
+            $group = Group::with('members')->find($groupId);
+            if (!$group) continue;
+
+            foreach ($group->members as $member) {
+                if ($member->phone) {
+                    // Format phone number
+                    $phone = $this->formatPhoneNumber($member->phone);
+
+                    // Add to job list
+                    if ($gateway_type === 'whatsapp') {
+                        $jobs[] = new SendWhatsAppJob($phone, $member->full_name, $message);
+                    }
+
+                    if ($gateway_type === 'sms') {
+                        // You can create a similar SendSmsJob for SMS if needed
+                        // $jobs[] = new SendSmsJob($phone, $member->full_name, $message);
+                        $smsService = new \App\Services\SmsService();
+                        \Log::info("Dispatching SMS to: " . $phone);
+                        $smsService->sendBulk([$phone], $message);
+                    }
+                }
+            }
+        }
+
+
+        // Dispatch all jobs as a batch
+        $batch = Bus::batch($jobs)
+            ->then(function ($batch) {
+                // Logic for when all messages are sent successfully
+                \Log::info("All WhatsApp messages sent successfully in batch ID: " . $batch->id);
+            })
+            ->catch(function ($batch, $e) {
+                // Logic for first batch failure
+                \Log::error("Error in WhatsApp message batch ID: " . $batch->id . ' Error: ' . $e->getMessage());
+            })
+            ->finally(function ($batch) {
+                // Logic after batch finishes (success or fail)
+                \Log::info("WhatsApp message batch ID: " . $batch->id . " has finished.");
+            })
+            ->dispatch();
+
+        return response()->json(['batch_id' => "batch->id"]);
     }
 }

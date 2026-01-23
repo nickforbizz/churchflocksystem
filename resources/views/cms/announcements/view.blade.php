@@ -183,6 +183,10 @@
                             <input class="form-check-input" type="checkbox" id="send_sms" name="send_via[]" value="sms">
                             <label class="form-check-label" for="send_sms">SMS (Requires SMS Gateway)</label>
                         </div>
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="send_whatsapp" name="send_via[]" value="whatsapp">
+                            <label class="form-check-label" for="send_whatsapp">WhatsApp </label>
+                        </div>
                     </div>
                 </div>
                 <!-- .modal-body -->

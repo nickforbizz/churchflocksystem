@@ -30,6 +30,7 @@ class ChildRequest extends FormRequest
     {
         return [
             'name' => 'required|min:2|max:255',
+            'member_id' => 'nullable|exists:members,id',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
         ];

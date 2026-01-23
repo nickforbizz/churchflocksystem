@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "africastalking/africastalking": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/fortify": "^1.16",
         "laravel/framework": "^10.0",
@@ -16,6 +17,7 @@
         "predis/predis": "^2.1",
         "rap2hpoutre/laravel-log-viewer": "^2.3",
         "spatie/laravel-permission": "^5.10",
+        "twilio/sdk": "^8.10",
         "yajra/laravel-datatables": "^10.0"
     },
     "require-dev": {

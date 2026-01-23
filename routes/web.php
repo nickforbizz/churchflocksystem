@@ -18,6 +18,7 @@ use App\Http\Controllers\cms\ProductCategoryController;
 use App\Http\Controllers\cms\ReportController;
 use App\Http\Controllers\cms\RoleController;
 use App\Http\Controllers\cms\SearchController;
+use App\Http\Controllers\cms\WhatsAppController;
 use App\Http\Controllers\frontend\ViewsController;
 use App\Http\Controllers\HomeController;
 use App\Models\User;
@@ -89,6 +90,7 @@ Route::middleware('cms')->group(function () {
     Route::get('/home', [HomeController::class, 'cms'])->name('home');
     Route::get('/cms', [HomeController::class, 'cms'])->name('cms');
     Route::get('/search', [SearchController::class, 'search'])->name('search');
+    Route::get('/send-whatsapp', [WhatsAppController::class, 'sendWhatsappMessage'])->name('send.whatsapp');
 
 
     // Downloadable Reports

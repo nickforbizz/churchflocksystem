@@ -67,6 +67,23 @@
                         </div>
                         <!-- .row -->
 
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="member_id" class="placeholder"> Parent/Guardian </label>
+                                    <select name="member_id" id="member_id" class="form-control @error('member_id') is-invalid @enderror" required>
+                                        <option value=""> Select Parent/Guardian </option>
+                                        @foreach($members as $member)
+                                        <option value="{{ $member->id }}" {{ old('member_id', $child->member_id ?? '') == $member->id ? 'selected' : '' }}> {{ $member->full_name }} </option>
+                                        @endforeach
+                                    </select>
+                                    @error('member_id') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <!-- .row -->
+
 
 
 
