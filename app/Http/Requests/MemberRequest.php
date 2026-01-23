@@ -44,6 +44,22 @@ class MemberRequest extends FormRequest
             'homecell_id' => 'nullable|exists:homecells,id',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
+            'gender' => 'required|string|max:50',
+            'residency' => 'nullable|string|max:255',
+            'postal_address' => 'nullable|string|max:255',
+            'occupation' => 'nullable|string|max:255',
+            'spouse' => 'nullable|string|max:255',
+            'spouse_number' => 'nullable|string|max:50',
+            'next_of_kin' => 'nullable|string|max:255',
+            'next_of_kin_number' => 'nullable|string|max:50',
+            'official_join_date' => 'nullable|date',
+            'born_again' => 'nullable|boolean',
+            'spirit_filled_when' => 'nullable|date',
+            'water_immersed_when' => 'nullable|date',
+            'from_church' => 'nullable|string|max:255',
+            'from_church_branch' => 'nullable|string|max:255',
+            'from_church_pastor' => 'nullable|string|max:255',
+            'from_church_pastor_number' => 'nullable|string|max:50'
         ];
     }
 

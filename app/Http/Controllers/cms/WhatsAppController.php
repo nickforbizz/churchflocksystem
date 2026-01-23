@@ -10,9 +10,8 @@ use Twilio\TwiML\MessagingResponse;
 
 class WhatsAppController extends Controller
 {
-    public function sendWhatsappMessage($receiverNumber = "+254707722247", $messageBody = "This is a message from your Laravel app using Twilio!")
+    public function sendWhatsappMessage($receiverNumber, $messageBody = "This is a message from your Laravel app using Twilio!")
     {
-        $receiverNumber = $receiverNumber; // Recipient's number in E.164 format
 
         try {
             $accountSid = env('TWILIO_ACCOUNT_SID');

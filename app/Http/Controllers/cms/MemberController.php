@@ -54,7 +54,7 @@ class MemberController extends Controller
                     return $row->user->name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn_edit = $btn_del = null;
+                    $btn_edit = $btn_del = $btn_view = null;
                     if (auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $row->created_by) {
                         $btn_edit = '<a data-toggle="tooltip" 
                                         href="' . route('members.edit', $row->id) . '" 
@@ -63,6 +63,13 @@ class MemberController extends Controller
                                     <i class="fa fa-edit"></i>
                                 </a>';
                     }
+
+                    $btn_view = '<a data-toggle="tooltip" 
+                                        href="' . route('members.show', $row->id) . '" 
+                                        class="btn btn-link btn-success btn-lg" 
+                                        data-original-title="View Record">
+                                    <i class="fa fa-eye"></i>
+                                </a>';
 
                     if (auth()->user()->hasRole('superadmin')) {
                         $btn_del = '<button type="button" 
@@ -74,7 +81,7 @@ class MemberController extends Controller
                                 <i class="fa fa-times"></i>
                             </button>';
                     }
-                    return $btn_edit . $btn_del;
+                    return $btn_edit . $btn_view . $btn_del;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -143,7 +150,7 @@ class MemberController extends Controller
         if ($request->has('ministries')) {
             $member = Member::latest()->first();
             $ministryIds = Ministry::whereIn('name', $request->input('ministries'))->pluck('id')->toArray();
-            $member->ministries()->attach($ministryIds);
+            $member->ministries()->sync($ministryIds);
         }
 
         return redirect()->back()->with('success', 'Record Created Successfully');
@@ -154,8 +161,13 @@ class MemberController extends Controller
      */
     public function show(Member $member)
     {
-        return response()
-            ->json($member, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+
+        // if ajax request, return json
+        if (request()->ajax()) {
+            return response()->json($member, 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
+
+        return view('cms.members.view', compact('member'));
     }
 
     /**

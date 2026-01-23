@@ -15,6 +15,7 @@ use App\Models\Group; // Added for sendToGroups
 use App\Http\Requests\AnnouncementRequest;
 use DataTables;
 use App\Jobs\SendAnnouncementToGroupMembers; // Added for sendToGroups
+use App\Jobs\SendSmsJob;
 use App\Jobs\SendWhatsAppJob;
 use Illuminate\Support\Facades\Bus;
 
@@ -231,32 +232,15 @@ class AnnouncementController extends Controller
         $message = $request->input('message');
 
 
-
-        // send message job to whatsapp if selected using twilio
-        // get group members and their whatsapp numbers
-        // $groupMembers = [];
-        // foreach ($groupIds as $groupId) {
-        //     $group = Group::find($groupId);
-        //     if ($group) {
-        //         foreach ($group->members as $member) {
-        //             if ($member->phone) {
-        //                 // prefix phone with extension +254 if not already prefixed
-        //                 if (strpos($member->phone, '+254') !== 0) {
-        //                     $member->phone = '+254' . ltrim($member->phone, '0');
-        //                 }
-        //                 array_push($groupMembers, ['phone' => $member->phone, 'name' => $member->full_name]);
-        //             }
-        //         }
-        //     }
-        // }
         $brodcast = null;
         if (in_array('whatsapp', $sendVia)) {
-            $brodcast = $this->broadcastToGroups($groupIds, $message);
+            $brodcast = $this->broadcastToGroups($groupIds, $message, 'whatsapp');
         }
 
-
-        // dd($brodcast);
-      
+        // for bulk sms
+        if(in_array('sms', $sendVia)){
+            $brodcast = $this->broadcastToGroups($groupIds, $message, 'sms');
+        }
 
         return redirect()->back()->with('success', 'Announcement sending process initiated. Members will receive notifications shortly.');
     }
@@ -272,7 +256,7 @@ class AnnouncementController extends Controller
     }
 
 
-    public function broadcastToGroups(array $groupIds, $message)
+    public function broadcastToGroups(array $groupIds, $message, $gateway_type)
     {
         $jobs = [];
 
@@ -286,9 +270,17 @@ class AnnouncementController extends Controller
                     $phone = $this->formatPhoneNumber($member->phone);
 
                     // Add to job list
-                    $jobs[] = new SendWhatsAppJob($phone, $member->full_name, $message);
-                    // $whatsAppController = new WhatsAppController();
-                    // $whatsAppController->sendWhatsappMessage($phone, $message);
+                    if ($gateway_type === 'whatsapp') {
+                        $jobs[] = new SendWhatsAppJob($phone, $member->full_name, $message);
+                    }
+
+                    if ($gateway_type === 'sms') {
+                        // You can create a similar SendSmsJob for SMS if needed
+                        // $jobs[] = new SendSmsJob($phone, $member->full_name, $message);
+                        $smsService = new \App\Services\SmsService();
+                        \Log::info("Dispatching SMS to: " . $phone);
+                        $smsService->sendBulk([$phone], $message);
+                    }
                 }
             }
         }
@@ -310,6 +302,6 @@ class AnnouncementController extends Controller
             })
             ->dispatch();
 
-        return response()->json(['batch_id' => $batch->id]);
+        return response()->json(['batch_id' => "batch->id"]);
     }
 }

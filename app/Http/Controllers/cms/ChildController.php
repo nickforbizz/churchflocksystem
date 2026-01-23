@@ -30,8 +30,8 @@ class ChildController extends Controller
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
                 })
-                ->addColumn('members_count', function ($row) {
-                    return $row->members()->count();
+                ->addColumn('guardian', function ($row) {
+                    return $row->member->full_name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
@@ -56,7 +56,7 @@ class ChildController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action', 'created_by', 'members_count'])
+                ->rawColumns(['action', 'created_by', 'guardian'])
                 ->make(true);
         }
 
@@ -70,11 +70,15 @@ class ChildController extends Controller
     public function create()
     {
 
+        $members = Cache::remember('Member_all_active', 60, function () {
+            return \App\Models\Member::where('active', 1)->orderBy('created_at', 'desc')->get();
+        });
+
         if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create child'))) {
             return redirect()->route('children.index')->with('error', 'You do not have permission to create children.');
         }
 
-        return view('cms.children.create');
+        return view('cms.children.create', compact('members'));
     }
 
     /**
@@ -111,7 +115,11 @@ class ChildController extends Controller
             return redirect()->route('children.index')->with('error', 'You do not have permission to update children.');
         }
 
-        return view('cms.children.create', compact('child'));
+        $members = Cache::remember('Member_all_active', 60, function () {
+            return \App\Models\Member::where('active', 1)->orderBy('created_at', 'desc')->get();
+        });
+
+        return view('cms.children.create', compact('child', 'members'));
     }
 
     /**
