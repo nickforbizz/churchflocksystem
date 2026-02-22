@@ -76,6 +76,20 @@
                                     @enderror
                                 </div>
                             </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="member_number" class="text-danger" > Member Number
+                                        <a href="#" tabindex="0" class="ml-2" role="button" data-toggle="popover" data-trigger="focus" title="Member Numbers" data-html="true" data-content="Next: {{ $nextMemberNumber ?? 'N/A' }}<br>Skipped: {{ !empty($skipped_member_numbers) ? implode(', ', $skipped_member_numbers) : 'None' }}">
+                                            <i class="fa fa-info-circle"></i>
+                                        </a>
+                                    </label>
+                                    <input id="member_number" type="text" class="form-control shadow @error('member_number') is-invalid @enderror" placeholder="Enter Member Number" name="member_number" value="{{ old('member_number', $member->member_number ?? $nextMemberNumber ?? '') }}" required />
+                                    @error('member_number') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                    <small class="form-text text-muted">This is a unique identifier for each member. It can be auto-generated or manually entered.</small>
+                                </div>
+                            </div>
                         </div>
 
 
@@ -368,6 +382,8 @@
                 $("#ministry").val('').trigger("change");
             }
         });
+        // initialize bootstrap popovers for member number info
+        $('[data-toggle="popover"]').popover();
     });
 </script>
 

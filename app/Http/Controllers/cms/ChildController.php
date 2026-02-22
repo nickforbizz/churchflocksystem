@@ -150,6 +150,15 @@ class ChildController extends Controller
             return redirect()->back()->with('error', 'Failed to update record. Please try again.');
         }
 
+        // check if its ajax request and respond with json
+        if ($request->ajax()) {
+            return response()->json([
+                'code' => 1,
+                'success' => true,
+                'msg' => 'Record updated successfully!'
+            ], 200, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+        }
+
         // Redirect the user to the user's profile page
         return redirect()
             ->route('children.index')

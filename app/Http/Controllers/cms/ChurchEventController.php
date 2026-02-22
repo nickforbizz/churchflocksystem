@@ -5,6 +5,7 @@ namespace App\Http\Controllers\cms;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChurchEventRequest;
 use App\Models\Event as ChurchEvent;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DataTables;
@@ -140,13 +141,17 @@ class ChurchEventController extends Controller
             return response()->json($event);
         }
 
+        $groups = Cache::remember('Group_all', 60, function () {
+            return Group::where('active', 1)->get();
+        });
+
         // For the full view page, get members who are not yet in attendance for this event
         $attendingMemberIds = $event->event_attendances->pluck('member_id')->all();
         $members = \App\Models\Member::where('active', 1)
                          ->whereNotIn('id', $attendingMemberIds)
                          ->get(['id', 'full_name']);
 
-        return view('cms.events.view', compact('event', 'members'));
+        return view('cms.events.view', compact('event', 'members', 'groups'));
     }
 
     /**

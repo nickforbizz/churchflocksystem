@@ -18,7 +18,7 @@ class EventAttendanceRequest extends FormRequest
         // return $user->hasAnyRole(['admin', 'superadmin']);
         
         // Only allow authenticated users to create groups
-        return Auth::check();
+        return Auth::check(); 
     }
 
     /**
@@ -29,7 +29,9 @@ class EventAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'member_id' => ['required', 'exists:members,id'],
+            'add_type' => ['required', Rule::in(['member', 'group'])],
+            'member_id' => ['required_if:add_type,member', 'nullable', 'exists:members,id'],
+            'group_id' => ['required_if:add_type,group', 'nullable', 'exists:groups,id'],
             'event_id' => 'required|exists:events,id',
             'attendance_date' => 'required|date',
             'attendance_time' => 'nullable',

@@ -38,6 +38,11 @@ class MemberRequest extends FormRequest
                 Rule::unique('members')->ignore($this->route('member')) // Ignore current member for update
             ],
             'birth_date' => 'nullable|date',
+            'member_number' => [
+                'required',
+                'string',
+                Rule::unique('members')->ignore($this->route('member')) // Ignore current member for update
+            ],
             'marital_status' => 'nullable|string|max:50',
             'join_date' => 'nullable|date',
             'group_id' => 'required|exists:groups,id',

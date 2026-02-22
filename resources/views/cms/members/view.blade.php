@@ -9,7 +9,7 @@
     .info-label {
         font-weight: 600;
         color: #666;
-        font-size: 0.85rem;
+        font-size: 0.65rem !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         display: block;
@@ -18,7 +18,7 @@
 
     .info-text {
         color: #2e3338;
-        font-size: 1rem;
+        font-size: 0.85rem !important;
         margin: 0;
         padding: 0.5rem 0.75rem;
         background-color: #f8f9fa;
@@ -84,10 +84,19 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">{{ $member->full_name ?? 'Member' }}</h4>
-                        <a href="{{ route('members.index') }}" class="btn btn-sm btn-primary btn-round ml-auto">
-                            <i class="flaticon-left-arrow-4 mr-2"></i>
-                            Back to List
-                        </a>
+                        <div class="ml-auto">
+
+                            @if(auth()->user()->hasAnyRole('superadmin|admin|editor') || auth()->id() == $member->created_by)
+                            <a href="{{ route('members.edit', $member->id) }}" class="btn btn-sm btn-info btn-round ml-auto">
+                                <i class="fa fa-edit mr-2"></i>
+                                Edit Member
+                            </a>
+                            @endif
+                            <a href="{{ route('members.index') }}" class="btn btn-sm btn-primary btn-round ml-auto">
+                                <i class="flaticon-left-arrow-4 mr-2"></i>
+                                Back to List
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -230,7 +239,7 @@
                             <div class="col-md-6 mb-3">
                                 <div class="info-group">
                                     <label class="info-label">Homecell</label>
-                                    <p class="info-text">{{ $member->homecell->name ?? 'N/A' }}</p>
+                                    <p class="info-text">{{ $member->homecell->primary_cell ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -266,10 +275,12 @@
                                 <div class="card mb-4 p-4">
                                     <div class="d-flex align-items-center mb-3">
                                         <h5 class="card-subtitle" style="color: #2e3338; font-weight: 600; margin-bottom: 0;">Children</h5>
+                                        @can('add child')
                                         <button type="button" class="btn btn-sm btn-primary ml-auto" data-toggle="modal" data-target="#addChildModal">
                                             <i class="fa fa-plus mr-2"></i>
                                             Add Child
                                         </button>
+                                        @endcan
                                     </div>
                                     @if($member->children->count() > 0)
                                     <div class="table-responsive">
@@ -280,6 +291,7 @@
                                                     <th>Name</th>
                                                     <th>Status</th>
                                                     <th>Added Date</th>
+                                                    <th width="150">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -299,6 +311,20 @@
                                                         @else
                                                         N/A
                                                         @endif
+                                                    </td>
+                                                    <td>
+                                                        @can('edit child')
+                                                        <button type="button" class="btn btn-xs btn-warning" title="Edit" 
+                                                                onclick="editChild({{ $child->id }}, '{{ $child->name }}', {{ $child->active ? '1' : '0' }})">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                        @endcan
+                                                        @can('delete child')
+                                                        <button type="button" class="btn btn-xs btn-danger" title="Delete"
+                                                                onclick="if(confirm('Are you sure?')) { deleteChild({{ $child->id }}); }">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                        @endcan
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -560,6 +586,48 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Child Modal -->
+<div class="modal fade" id="editChildModal" tabindex="-1" role="dialog" aria-labelledby="editChildModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editChildModalLabel">Edit Child</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editChildForm">
+                <div class="modal-body">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="child_id" id="child_id">
+                    
+                    <div class="form-group">
+                        <label for="editChildName" class="placeholder">Child Name *</label>
+                        <input type="text" class="form-control" id="editChildName" name="name" placeholder="Enter child name" required>
+                        <span class="text-danger" id="editChildNameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editChildActive">Status</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="editChildActive" name="active" value="1">
+                            <label class="custom-control-label" for="editChildActive">Active</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save mr-2"></i>
+                        Update Child
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </div>
 <!-- .page-inner -->
 @endsection
@@ -585,6 +653,35 @@
             error: function(error) {
                 alert('An error occurred while deleting the member.');
                 console.error(error);
+            }
+        });
+    }
+
+    function editChild(childId, childName, isActive) {
+        $('#child_id').val(childId);
+        $('#editChildName').val(childName);
+        $('#editChildActive').prop('checked', isActive == 1);
+        $('#editChildModal').modal('show');
+    }
+
+    function deleteChild(childId) {
+        $.ajax({
+            url: "{{ route('children.destroy', '') }}/" + childId,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Child deleted successfully');
+                    location.reload();
+                } else {
+                    alert(response.message || 'Failed to delete child');
+                }
+            },
+            error: function(xhr) {
+                alert('An error occurred while deleting the child.');
+                console.error(xhr);
             }
         });
     }
@@ -633,6 +730,54 @@
                         $('#childNameError').text(errors.name[0]);
                     } else {
                         alert('An error occurred while adding the child.');
+                    }
+                }
+            });
+        });
+
+        // Edit Child Form Submission
+        $('#editChildForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const childId = $('#child_id').val();
+            const formData = new FormData();
+            formData.append('name', $('#editChildName').val());
+            formData.append('active', $('#editChildActive').is(':checked') ? 1 : 0);
+            formData.append('_token', $('input[name="_token"]').val());
+            formData.append('_method', 'PUT');
+
+            $.ajax({
+                url: "{{ route('children.update', '') }}/" + childId,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        alert('Child updated successfully');
+                        
+                        // Close modal
+                        $('#editChildModal').modal('hide');
+                        
+                        // Reload page to show updated child
+                        setTimeout(function() {
+                            location.reload();
+                        }, 500);
+                    } else {
+                        alert(response.message || 'Failed to update child');
+                    }
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(errors);
+                    if (errors && errors.name) {
+                        $('#editChildNameError').text(errors.name[0]);
+                    } else {
+                        alert('An error occurred while updating the child.');
                     }
                 }
             });
