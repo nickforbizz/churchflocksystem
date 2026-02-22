@@ -121,6 +121,17 @@ class MemberController extends Controller
         // updat the cache for Members
         Cache::forget('Member_all');
 
+        // compute next member number and any skipped numbers in the sequence
+        $maxNumber = Member::max('member_number') ?? 0;
+        $nextMemberNumber = $maxNumber + 1;
+        $existingNumbers = Member::whereNotNull('member_number')->pluck('member_number')->unique()->sort()->toArray();
+        $skipped_member_numbers = [];
+        for ($i = 1; $i <= $maxNumber; $i++) {
+            if (!in_array($i, $existingNumbers)) {
+                $skipped_member_numbers[] = $i;
+            }
+        }
+
         // Render the create view with groups
         if ($groups->isEmpty()) {
             return redirect()->back()->with('error', 'No active groups found. Please create a group first.');
@@ -128,7 +139,7 @@ class MemberController extends Controller
 
 
 
-        return view('cms.members.create', compact('groups', 'homecells', 'ministries', 'member_ministries'));
+        return view('cms.members.create', compact('groups', 'homecells', 'ministries', 'member_ministries', 'nextMemberNumber', 'skipped_member_numbers'));
     }
 
     /**
@@ -141,8 +152,12 @@ class MemberController extends Controller
             return redirect()->route('members.index')->with('error', 'You do not have permission to create members.');
         }
 
+        $data = $request->validated();
+        if (empty($data['member_number'])) {
+            $data['member_number'] = (Member::max('member_number') ?? 0) + 1;
+        }
 
-        if(!Member::create($request->validated())){
+        if (!Member::create($data)) {
             return redirect()->back()->with('error', 'Failed to create record. Please try again.');
         }
 
@@ -195,9 +210,20 @@ class MemberController extends Controller
 
         $member_ministries = [];
 
-
         $member_ministries = $member->ministries()->pluck('name')->toArray();
-        return view('cms.members.create', compact('member', 'groups', 'homecells', 'ministries', 'member_ministries'));
+
+        // also compute next and skipped numbers for the view (useful when editing)
+        $maxNumber = Member::max('member_number') ?? 0;
+        $nextMemberNumber = $maxNumber + 1;
+        $existingNumbers = Member::whereNotNull('member_number')->pluck('member_number')->unique()->sort()->toArray();
+        $skipped_member_numbers = [];
+        for ($i = 1; $i <= $maxNumber; $i++) {
+            if (!in_array($i, $existingNumbers)) {
+                $skipped_member_numbers[] = $i;
+            }
+        }
+
+        return view('cms.members.create', compact('member', 'groups', 'homecells', 'ministries', 'member_ministries', 'nextMemberNumber', 'skipped_member_numbers'));
     }
 
     /**

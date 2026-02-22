@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EventAttendanceRequest;
 use App\Models\EventAttendance;
 use App\Models\Member;
+use App\Models\Group;
 use App\Models\Event as ChurchEvent;
 use Illuminate\Http\Request;
 use DataTables;
@@ -112,7 +113,11 @@ class EventAttendanceController extends Controller
 
 
 
-        return view('cms.event_attendance.create', compact('members', 'events'));
+        $groups = Cache::remember('Group_all', 60, function () {
+            return Group::where('active', 1)->get();
+        });
+
+        return view('cms.event_attendance.create', compact('members', 'events', 'groups'));
     }
 
     /**
@@ -126,9 +131,53 @@ class EventAttendanceController extends Controller
             return redirect()->route('eventAttendance.index')->with('error', 'You do not have permission to create eventAttendance.');
         }
 
-        $attendance = EventAttendance::create($request->validated());
+        $input = $request->validated();
 
+        $created = [];
 
+        // if adding by group, create attendance for all active members in that group
+        if ($request->input('add_type') === 'group' && $request->filled('group_id')) {
+            $groupMembers = Member::where('group_id', $request->input('group_id'))->where('active', 1)->get();
+            foreach ($groupMembers as $member) {
+                // avoid duplicate attendance for same event/date/member
+                $exists = EventAttendance::where('event_id', $input['event_id'])
+                    ->where('member_id', $member->id)
+                    ->whereDate('attendance_date', $input['attendance_date'])
+                    ->exists();
+                if ($exists) {
+                    continue;
+                }
+
+                $payload = array_merge($input, [
+                    'member_id' => $member->id,
+                ]);
+
+                $att = EventAttendance::create($payload);
+                if ($att) {
+                    $att->load(['member', 'user']);
+                    $created[] = $att;
+                }
+            }
+
+            if (empty($created)) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'No new attendance records were created (they may already exist).'], 200);
+                }
+                return redirect()->back()->with('info', 'No new attendance records were created (they may already exist).');
+            }
+
+            // Clear cache
+            Cache::forget('EventAttendance_all');
+
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Attendance recorded for group members.', 'data' => $created]);
+            }
+
+            return redirect()->route('eventAttendance.index')->with('success', 'Attendance recorded for group members.');
+        }
+
+        // default: single member attendance
+        $attendance = EventAttendance::create($input);
         if (!$attendance) {
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'Failed to create record. Please try again.'], 500);
@@ -140,7 +189,6 @@ class EventAttendanceController extends Controller
         Cache::forget('EventAttendance_all');
 
         if ($request->ajax()) {
-            // Eager load for the response
             $attendance->load(['member', 'user']);
             return response()->json(['success' => true, 'message' => 'Attendance recorded successfully.', 'data' => $attendance]);
         }
@@ -205,7 +253,9 @@ class EventAttendanceController extends Controller
         // Clear the cache for Member
         Cache::forget('Member_all');
 
-       
+       if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Attendance recorded successfully.', 'data' => $eventAttendance]);
+        }
 
         // Redirect the user to the user's profile page
         return redirect()
