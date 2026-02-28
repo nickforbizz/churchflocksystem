@@ -40,11 +40,38 @@ class EventAttendanceController extends Controller
 
                     return date_format($row->attendance_date, 'Y/m/d');
                 })
+                
                 ->editColumn('member_id', function ($row) {
-                    return $row->member->full_name ?? 'N/A';
+                    if (is_null($row->member)) {
+                        return 'N/A';
+                    }
+                    return '<a href="' . route('members.show', $row->member->id) . '">' . $row->member->full_name . '</a>';
                 })
                 ->editColumn('event_id', function ($row) {
-                    return $row->event->title ?? 'N/A';
+                    if (is_null($row->event)) {
+                        return 'N/A';
+                    }
+                    return '<a href="' . route('events.show', $row->event->id) . '">' . $row->event->title . '</a>';
+                })
+                ->editColumn('status', function ($row) {
+                    $status = $row->status ?? 'N/A';
+                    $colors = [
+                        'present' => 'success',
+                        'absent' => 'danger',
+                        'excused' => 'warning'
+                    ];
+                    $color = $colors[$status] ?? 'secondary';
+                    return '<span class="badge badge-' . $color . '">' . ucfirst($status) . '</span>';
+                })
+                // attendance type - make it like status with colors
+                ->editColumn('attendance_type', function ($row) {
+                    $type = $row->attendance_type ?? 'N/A';
+                    $colors = [
+                        'in-person' => 'secondary',
+                        'online' => 'success',
+                    ];
+                    $color = $colors[$type] ?? 'dark';
+                    return '<span class="badge badge-' . $color . '">' . ucfirst($type) . '</span>';
                 })
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
@@ -72,7 +99,7 @@ class EventAttendanceController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'event_id', 'member_id', 'status', 'attendance_type'])
                 ->make(true);
         }
 

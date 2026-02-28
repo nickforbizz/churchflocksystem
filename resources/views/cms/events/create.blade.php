@@ -64,11 +64,25 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="event_date" > Event Date </label>
                                     <input id="event_date" type="date" class="form-control @error('event_date') is-invalid @enderror" name="event_date" value="{{ old('event_date', isset($churchEvent->event_date) ? $churchEvent->event_date->format('Y-m-d') : '') }}" required />
                                     @error('event_date') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="group_id" > Group </label>
+                                    <select id="group_id" name="group_id" class="form-control @error('group_id') is-invalid @enderror" required>
+                                        <option value="">Select Group</option>
+                                        @foreach($groups as $group)
+                                            <option value="{{ $group->id }}" {{ old('group_id', $churchEvent->group_id ?? '') == $group->id ? 'selected' : '' }}>{{ $group->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('group_id') <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -81,7 +95,18 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="location"> Location </label>
+                                    <input id="location" type="text" class="form-control @error('location') is-invalid @enderror" placeholder="Enter Location" name="location" value="{{ old('location', $churchEvent->location ?? '') }}" required />
+                                    @error('location') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="active"> Active </label>
                                     <select name="active" id="active" class="form-control @error('active') is-invalid @enderror">

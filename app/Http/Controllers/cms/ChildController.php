@@ -31,7 +31,11 @@ class ChildController extends Controller
                     return $row->user->name ?? 'N/A';
                 })
                 ->addColumn('guardian', function ($row) {
-                    return $row->member->full_name ?? 'N/A';
+                    // make it clickable to the member profile if the guardian exists
+                    if ($row->member) {
+                        return '<a href="' . route('members.show', $row->member->id) . '">' . $row->member->full_name . '</a>';
+                    }
+                    return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;

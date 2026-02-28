@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\cms;
 
+use App\Exports\MemberExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberRequest;
 use App\Models\Member;
@@ -9,8 +10,10 @@ use App\Models\Group;
 use App\Models\Homecell;
 use App\Models\Ministry;
 use Illuminate\Http\Request;
-use DataTables;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class MemberController extends Controller
 {
@@ -19,19 +22,54 @@ class MemberController extends Controller
      */
     public function index(Request $request)
     {
-        // return datatable of the makes available
-        $data = Cache::remember('Member_all', 60, function () {
-            return Member::orderBy('created_at', 'desc')->get();
-        });
         if ($request->ajax()) {
-            return Datatables::of($data)
+            $query = Member::with(['group', 'user'])->orderBy('created_at', 'desc');
+
+            return DataTables::eloquent($query)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($row) {
-                    if (is_null($row->created_at)) {
-                        return 'N/A';
+                ->filter(function ($query) use ($request) {
+                    $criteria = $request->input('quick_search_criteria');
+                    $value = trim((string) $request->input('quick_search_value', ''));
+
+                    if ($value === '' || empty($criteria)) {
+                        return;
                     }
 
-                    return date_format($row->created_at, 'Y/m/d H:i');
+                    if ($criteria === 'phone') {
+                        $query->where('phone', 'like', '%' . $value . '%');
+                        return;
+                    }
+
+                    if ($criteria === 'member_number') {
+                        $query->where('member_number', 'like', '%' . $value . '%');
+                        return;
+                    }
+
+                    if ($criteria === 'national_id') {
+                        if (Schema::hasColumn('members', 'national_id')) {
+                            $query->where('national_id', 'like', '%' . $value . '%');
+                            return;
+                        }
+
+                        if (Schema::hasColumn('members', 'id_number')) {
+                            $query->where('id_number', 'like', '%' . $value . '%');
+                            return;
+                        }
+
+                        $query->whereRaw('1 = 0');
+                    }
+                }, true)
+                ->editColumn('member_number', function ($row) {
+                    if (is_null($row->member_number)) {
+                        return 'N/A';
+                    }
+                    return $row->member_number;
+                })
+                ->editColumn('full_name', function ($row) {
+                    if (is_null($row->full_name)) {
+                        return 'N/A';
+                    }
+                    return '<a href="' . route('members.show', $row->id) . '">' . $row->full_name . '</a>';
                 })
                 ->editColumn('join_date', function ($row) {
                     if (is_null($row->join_date)) {
@@ -52,6 +90,13 @@ class MemberController extends Controller
                 })
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
+                })
+                ->editColumn('created_at', function ($row) {
+                    if (is_null($row->created_at)) {
+                        return 'N/A';
+                    }
+
+                    return date_format($row->created_at, 'Y/m/d H:i');
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = $btn_view = null;
@@ -83,7 +128,7 @@ class MemberController extends Controller
                     }
                     return $btn_edit . $btn_view . $btn_del;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'full_name', 'member_number', 'join_date', 'birth_date'])
                 ->make(true);
         }
 
@@ -92,13 +137,48 @@ class MemberController extends Controller
     }
 
     /**
+     * Search members for Select2 AJAX dropdown.
+     */
+    public function search(Request $request)
+    {
+        $term = trim((string) $request->query('term', ''));
+        $page = max((int) $request->query('page', 1), 1);
+        $eventId = (int) $request->query('event_id', 0);
+
+        $query = Member::query()->select(['id', 'full_name', 'member_number']);
+
+        if ($eventId > 0) {
+            $query->whereDoesntHave('event_attendances', function ($attendanceQuery) use ($eventId) {
+                $attendanceQuery->where('event_id', $eventId);
+            });
+        }
+
+        if ($term !== '') {
+            $query->where(function ($q) use ($term) {
+                $q->where('full_name', 'like', '%' . $term . '%')
+                    ->orWhere('member_number', $term);
+            });
+        }
+
+        $members = $query
+            ->orderBy('full_name')
+            ->paginate(10, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $members->items(),
+            'current_page' => $members->currentPage(),
+            'last_page' => $members->lastPage(),
+        ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         // If you want to cache the groups, you can uncomment the next line
-        $groups = Cache::remember('Group_all', 60, function () {
-            return Group::where('active', 1)->get();
+        $groups = Cache::remember('Groups_s', 60, function () {
+            return Group::where('active', 1)->where('name', '!=', 'all')->get();
         });
 
         // homecells
@@ -194,8 +274,8 @@ class MemberController extends Controller
             return redirect()->route('members.index')->with('error', 'You do not have permission to edit members.');
         }
         // Get groups from cache
-        $groups = Cache::remember('Group_all', 60, function () {
-            return Group::where('active', 1)->get();
+        $groups = Cache::remember('Groups_s', 60, function () {
+            return Group::where('active', 1)->where('name', '!=', 'all')->get();
         });
 
         // Get homecells from cache
@@ -236,7 +316,7 @@ class MemberController extends Controller
             return redirect()->route('members.index')->with('error', 'You do not have permission to update members.');
         }
 
-        if(!$member->update($request->validated())){
+        if (!$member->update($request->validated())) {
             return redirect()->back()->with('error', 'Failed to update record. Please try again.');
         }
 
@@ -257,7 +337,7 @@ class MemberController extends Controller
         // Optionally, you can clear the cache for the group if needed
         Cache::forget('Group_' . $member->group_id);
 
-       
+
 
         // Redirect the user to the user's profile page
         return redirect()
@@ -290,5 +370,28 @@ class MemberController extends Controller
             'code' => -1,
             'msg' => 'Record did not delete'
         ], 422, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+    }
+
+    /**
+     * Export members to Excel.
+     */
+    public function export(Request $request)
+    {
+        // Check permissions
+        if (!auth()->user()->hasAnyRole(['admin', 'superadmin'])) {
+            return redirect()->route('members.index')->with('error', 'You do not have permission to export members.');
+        }
+
+        $groupIds = $request->input('group_ids', []);
+        $groupNames = null;
+
+        if (!empty($groupIds)) {
+            $groupNames = \App\Models\Group::whereIn('id', $groupIds)->pluck('name')->implode(', ');
+        }
+
+
+        $filename = 'members_export_' . date('Y-m-d_His') . '.xlsx';
+
+        return Excel::download(new MemberExport($groupIds ?: null, $groupNames), $filename);
     }
 }

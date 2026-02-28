@@ -275,7 +275,7 @@
                                 <div class="card mb-4 p-4">
                                     <div class="d-flex align-items-center mb-3">
                                         <h5 class="card-subtitle" style="color: #2e3338; font-weight: 600; margin-bottom: 0;">Children</h5>
-                                        @can('add child')
+                                        @can('create child')
                                         <button type="button" class="btn btn-sm btn-primary ml-auto" data-toggle="modal" data-target="#addChildModal">
                                             <i class="fa fa-plus mr-2"></i>
                                             Add Child

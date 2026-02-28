@@ -32,12 +32,20 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">List of Available Record(s)</h4>
-                        @can('create group')
-                        <a href="{{ route('groups.create') }}" class="btn btn-sm btn-primary btn-round ml-auto" >
-                            <i class="flaticon-add mr-2"></i>
-                            Add new Group
-                        </a> 
-                        @endcan
+                        <div class="ml-auto">
+                            @can('create group')
+                            <a href="{{ route('groups.create') }}" class="btn btn-sm btn-primary btn-round">
+                                <i class="flaticon-add mr-2"></i>
+                                Add new Group
+                            </a> 
+                            @endcan
+                            @hasanyrole('admin|superadmin')
+                            <a href="{{ route('groups.export') }}" class="btn btn-sm btn-success btn-round">
+                                <i class="fa fa-download mr-2"></i>
+                                Export to Excel
+                            </a>
+                            @endhasanyrole
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -50,7 +58,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
-                                    <th> Count</th>
+                                    <!-- <th> Count</th> -->
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Action</th>
@@ -83,9 +91,6 @@
                 },
                 {
                     data: 'name',
-                },
-                {
-                    data: 'members_count',
                 },
                 {
                     data: 'created_by'

@@ -10,6 +10,7 @@ use App\Http\Controllers\cms\HomecellController;
 use App\Http\Controllers\cms\MemberController;
 use App\Http\Controllers\cms\MinistryController;
 use App\Http\Controllers\cms\NotificationController;
+use App\Http\Controllers\cms\ParamController;
 use App\Http\Controllers\cms\PermissionController;
 use App\Http\Controllers\cms\UserController;
 use App\Http\Controllers\cms\PostCategoryController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\cms\ProductCategoryController;
 use App\Http\Controllers\cms\ReportController;
 use App\Http\Controllers\cms\RoleController;
 use App\Http\Controllers\cms\SearchController;
+use App\Http\Controllers\cms\ValuelistController;
 use App\Http\Controllers\cms\WhatsAppController;
 use App\Http\Controllers\frontend\ViewsController;
 use App\Http\Controllers\HomeController;
@@ -98,6 +100,14 @@ Route::middleware('cms')->group(function () {
 
     Route::get('/calendar', [ChurchEventController::class, 'showCalendar'])->name('calendar');
     Route::get('/calendar/events', [ChurchEventController::class, 'calendarEvents'])->name('calendar.events');
+    Route::get('/members/search', [MemberController::class, 'search'])->name('members.search');
+    Route::get('/members/export', [MemberController::class, 'export'])->name('members.export');
+    Route::get('/groups/list', [GroupController::class, 'list'])->name('groups.list');
+    Route::get('/groups/export', [GroupController::class, 'export'])->name('groups.export');
+    
+    // Valuelist API routes
+    Route::get('/valuelists/types/search', [ValuelistController::class, 'searchTypes'])->name('valuelists.types.search');
+    Route::get('/valuelists/types/next-index', [ValuelistController::class, 'getNextIndex'])->name('valuelists.types.nextIndex');
 
 
     // Resources Routes
@@ -112,15 +122,17 @@ Route::middleware('cms')->group(function () {
         'eventAttendance' => EventAttendanceController::class,
         'donations' => DonationController::class,
         'announcements' => AnnouncementController::class,
+        'params' => ParamController::class,
+        'valuelists' => ValuelistController::class,
 
-
-        'posts' => PostController::class,
-        'postCategories' => PostCategoryController::class,
-        'productCategories' => ProductCategoryController::class,
         'roles' => RoleController::class,
         'permissions' => PermissionController::class,
         'reports' => ReportController::class,
         'notifications' => NotificationController::class,
+
+        'posts' => PostController::class,
+        'postCategories' => PostCategoryController::class,
+        'productCategories' => ProductCategoryController::class,
     ]);
 
     // downloadCalendarCsv

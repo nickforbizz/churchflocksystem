@@ -209,7 +209,6 @@
         $('#groups').select2({
             width: '100%',
             placeholder: 'Select Groups',
-            allowClear: true,
             // theme: 'bootstrap4',
             // Important for modals
             dropdownParent: $('#sendToGroupsModal') 

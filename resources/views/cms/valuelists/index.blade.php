@@ -3,7 +3,7 @@
 @section('content')
 <div class="page-inner">
     <div class="page-header">
-        <h4 class="page-title"> Events </h4>
+        <h4 class="page-title"> Valuelist </h4>
         <ul class="breadcrumbs">
             <li class="nav-home">
                 <a href="#">
@@ -14,7 +14,7 @@
                 <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-                <a href="#"> Events</a>
+                <a href="#"> Valuelist</a>
             </li>
             <li class="separator">
                 <i class="flaticon-right-arrow"></i>
@@ -25,7 +25,7 @@
         </ul>
     </div>
     <div class="row">
-   
+
 
         <div class="col-md-12">
             <div class="card">
@@ -34,17 +34,17 @@
                         <h4 class="card-title">List of Available Record(s)</h4>
 
                         <div class="ml-auto">
-                            <a href="{{ route('calendar') }}" class="btn btn-info btn-round " >
-                                <i class="flaticon-add mr-2"></i>
-                                View Calender
+                            <a href="{{ route('params.index') }}" class="btn btn-secondary btn-round " >
+                                <i class="flaticon-back mr-2"></i>
+                                Back to Params
                             </a> 
     
-                            @can('create event')
-                            <a href="{{ route('events.create') }}" class="btn btn-primary btn-round ml-auto" >
+                            <a href="{{ route('valuelists.create') }}" class="btn btn-primary btn-round ml-auto" >
                                 <i class="flaticon-add mr-2"></i>
-                                Add Row
+                                Add Valuelist
                             </a> 
-                            @endcan
+                            <!-- @can('create valuelist') --> 
+                            <!-- @endcan -->
 
                         </div>
                     </div>
@@ -54,15 +54,13 @@
 
                     <div class="table-responsive">
                         @include('cms.helpers.partials.feedback')
-                        <table id="tb_events" class="display table table-striped table-hover">
+                        <table id="tb_valuelists" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Title</th>
-                                    <th>Event Date</th>
-                                    <th>To Attend</th>
-                                    <th>Attending</th>
-                                    <th>Attendance %</th>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th>Index</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Action</th>
@@ -85,28 +83,22 @@
 
 <script>
     $(document).ready(function() {
-        $('#tb_events').DataTable({
+        $('#tb_valuelists').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('events.index') }}",
+            ajax: "{{ route('valuelists.index') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
                 },
                 {
-                    data: 'title'
+                    data: 'type'
                 },
                 {
-                    data: 'event_date'
+                    data: 'value'
                 },
                 {
-                    data: 'fk_group',
-                },
-                {
-                    data: 'Attending'
-                },
-                {
-                    data: 'attendance_percent'
+                    data: 'index'
                 },
                 {
                     data: 'created_by'
@@ -122,7 +114,7 @@
                 },
             ]
         });
-        // #tb_events
+        // #tb_valuelists
 
        
     });

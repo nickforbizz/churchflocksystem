@@ -184,7 +184,7 @@
 							</li>
 
 							<li>
-								<a href="#">
+								<a href="{{ route('params.index') }}">
 									<span class="sub-item">Params</span>
 								</a>
 							</li>

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-class ChurchEventRequest extends FormRequest
+class ParamRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,7 +17,7 @@ class ChurchEventRequest extends FormRequest
         $user = auth()->user();
         // return $user->hasAnyRole(['admin', 'superadmin']);
         
-        // Only allow authenticated users to create groups
+        // Only allow authenticated users to create params
         return Auth::check();
     }
 
@@ -29,13 +29,13 @@ class ChurchEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|min:2|max:255',
-            'description' => 'nullable|max:1000',
-            'location' => 'nullable|max:255',
-            'event_date' => 'required',
+            'group' => 'required|min:2|max:255',
+            'key' => 'required|min:2|max:255',
+            'value' => 'required|min:2|max:255',
+            'description' => 'nullable|min:2|max:255',
+            'is_public' => 'boolean',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
-            'fk_group' => 'nullable|exists:groups,id',
         ];
     }
 
@@ -56,11 +56,4 @@ class ChurchEventRequest extends FormRequest
         ]);
     }
 
-
-    public function passedValidation()
-    {
-        $this->merge([
-            'created_by' => Auth::id()
-        ]);
-    }
 }

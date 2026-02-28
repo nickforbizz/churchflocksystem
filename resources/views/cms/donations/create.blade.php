@@ -61,12 +61,14 @@
                                 <div class="form-group">
                                     <label for="member_id">Member</label>
                                     <select name="member_id" id="member_id" class="form-control @error('member_id') is-invalid @enderror">
-                                        <option value="">-- Select Member --</option>
-                                        @forelse($members as $member)
-                                        <option value="{{ $member->id }}" {{ old('member_id', $donation->member_id ?? '') == $member->id ? 'selected' : '' }}> {{ $member->full_name }} </option>
-                                        @empty
-                                        <option disabled> -- No members available -- </option>
-                                        @endforelse
+                                        <option value="">Select an option</option>
+                                        @php
+                                            $selectedMemberId = old('member_id', $donation->member_id ?? '');
+                                            $selectedMember = $selectedMemberId ? $members->firstWhere('id', (int) $selectedMemberId) : null;
+                                        @endphp
+                                        @if($selectedMember)
+                                            <option value="{{ $selectedMember->id }}" selected>{{ $selectedMember->full_name }}</option>
+                                        @endif
                                     </select>
                                     @error('member_id') <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -160,7 +162,9 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-
+        initMemberSearchSelect2('#member_id', {
+            url: "{{ route('members.search') }}"
+        });
     });
 </script>
 

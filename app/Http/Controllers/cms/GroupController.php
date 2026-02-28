@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\cms;
 
+use App\Exports\GroupExport;
 use App\Http\Controllers\Controller;
 use App\Models\Group;
 use App\Http\Requests\GroupRequest;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GroupController extends Controller
 {
@@ -27,11 +29,20 @@ class GroupController extends Controller
                 ->editColumn('created_at', function ($row) {
                     return date_format($row->created_at, 'Y/m/d H:i');
                 })
+                ->editColumn('name', function ($row) {
+                    // return name with a red badge showing the count of members in the group, if group is all, show total active members count
+                    if ($row->name == 'All') {
+                        $membersCount = Cache::remember('active_members_count', 60, function () {
+                            return \App\Models\Member::where('active', 1)->count();
+                        });
+                    } else {
+                        $membersCount = $row->members()->count();
+                    }
+                    $badge = '<span class="badge badge-sm badge-pill badge-danger ml-2 notification" style="font-size: 0.75rem; padding: .25em .4em;">' . $membersCount . '</span>';
+                    return ($row->name ?? 'N/A') . ' ' . $badge;
+                })
                 ->editColumn('created_by', function ($row) {
                     return $row->user->name ?? 'N/A';
-                })
-                ->addColumn('members_count', function ($row) {
-                    return $row->members()->count();
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
@@ -56,7 +67,7 @@ class GroupController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action', 'created_by', 'members_count'])
+                ->rawColumns(['action', 'created_by', 'name', 'created_at'])
                 ->make(true);
         }
 
@@ -157,5 +168,36 @@ class GroupController extends Controller
             'code' => -1,
             'msg' => 'Record did not delete'
         ], 422, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
+    }
+
+    /**
+     * Get list of active groups for dropdowns/select elements.
+     */
+    public function list()
+    {
+        $groups = Cache::remember('Groups_list', 60, function () {
+            return Group::where('active', 1)
+                ->where('name', '!=', 'All')
+                ->has('members')
+                ->orderBy('name', 'asc')
+                ->get(['id', 'name']);
+        });
+
+        return response()->json(['data' => $groups]);
+    }
+
+    /**
+     * Export groups to Excel.
+     */
+    public function export()
+    {
+        // Check permissions
+        if (!auth()->user()->hasAnyRole(['admin', 'superadmin'])) {
+            return redirect()->route('groups.index')->with('error', 'You do not have permission to export groups.');
+        }
+
+        $filename = 'groups_export_' . date('Y-m-d_His') . '.xlsx';
+
+        return Excel::download(new GroupExport(), $filename);
     }
 }
