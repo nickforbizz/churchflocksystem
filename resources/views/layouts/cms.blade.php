@@ -52,6 +52,7 @@
 </head>
 
 <body>
+	
 	<div class="wrapper">
 		<div class="main-header">
 			<!-- Logo Header -->
@@ -92,29 +93,17 @@
 		@include('cms.helpers.partials.sidebar')
 		<!-- End Sidebar -->
 
-		<div class="main-panel">
+		<div class="main-panel" id="contentHolder">
 			<div class="content">
-
-
 				@yield('content')
-
-
-
-
 			</div>
 			<!-- .content -->
-
-
-
 
 			<!-- Footer -->
 			@include('cms.helpers.partials.footer')
 			<!-- Footer END -->
-
 		</div>
 		<!-- .main-panel -->
-
-
 	</div>
 	<!-- .wrapper -->
 
@@ -164,6 +153,28 @@
 
 
 	<script>
+
+		
+$(window).on('beforeunload', function(){
+    $(".sidebar").fadeTo("slow",0.2);
+    $("#modal").modal("hide");
+	$("#contentHolder").html(`<div class='d-flex justify-content-center align-items-center' style='height: 100vh'> 
+		<div class='text-center'> 
+			<h1>{{ env('APP_NAME') }}</h1> 
+			<h3>Loading ...</h3> 
+		</div>
+	</div>`)
+    $("#contentHolder").append(`
+        <div class="text-center my_loader">
+            <div class="loadingio-spinner-spinner-fpufj1c8num  ">
+                <div class="ldio-0hf3ht1mqwp">
+                    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                </div>
+            </div>
+
+        </div>
+    `);
+});
 		$(document).ready(function() {
 
 			// Disable submit btn when submitting form
@@ -175,6 +186,8 @@
 			// select2 init
 			$('.select2').select2({
 				placeholder: 'Select an option',	
+				width: '100%',
+				
 			});
 			
 
@@ -185,6 +198,66 @@
 			// 	toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
 			// });
 		});
+
+		function initMemberSearchSelect2(selector, options = {}) {
+			const $element = $(selector);
+			if (!$element.length) {
+				return;
+			}
+
+			if ($element.data('select2')) {
+				$element.select2('destroy');
+			}
+
+			const ajaxUrl = options.url || '';
+			const extraData = typeof options.extraData === 'function' ? options.extraData : function() { return {}; };
+
+			$element.select2({
+				placeholder: options.placeholder || 'Select an option',
+				allowClear: options.allowClear !== undefined ? options.allowClear : true,
+				width: options.width || '100%',
+				dropdownParent: options.dropdownParent ? $(options.dropdownParent) : undefined,
+				minimumInputLength: options.minimumInputLength !== undefined ? options.minimumInputLength : 1,
+				ajax: {
+					url: ajaxUrl,
+					dataType: 'json',
+					delay: 250,
+					data: function(params) {
+						return Object.assign({
+							term: params.term || '',
+							page: params.page || 1
+						}, extraData());
+					},
+					processResults: function(response, params) {
+						params.page = params.page || 1;
+
+						return {
+							results: $.map(response.data || [], function(member) {
+								return {
+									id: member.id,
+									text: `	| ${member.member_number} | - ${member.full_name} `
+								};
+							}),
+							pagination: {
+								more: (response.current_page || 1) < (response.last_page || 1)
+							}
+						};
+					},
+					cache: true
+				},
+				language: {
+					inputTooShort: function() {
+						return 'Type at least 1 character';
+					},
+					searching: function() {
+						return '<span><i class="fa fa-spinner fa-spin mr-1"></i>Searching...</span>';
+					}
+				},
+				escapeMarkup: function(markup) {
+					return markup;
+				}
+			});
+		}
 
 		
 		function readURL(input) {
@@ -280,6 +353,8 @@
 				});
 			});
 		}
+
+	
 	</script>
 
 	@stack('scripts')

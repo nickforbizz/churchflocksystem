@@ -72,34 +72,34 @@
 					<div class="quick-actions-scroll scrollbar-outer">
 						<div class="quick-actions-items">
 							<div class="row m-0">
-								<a class="col-6 col-md-4 p-0" href="{{ route('reports.index') }}">
+								<a class="col-6 col-md-4 p-0" href="{{ route('members.index') }}">
 									<div class="quick-actions-item">
-										<i class="flaticon-file-1"></i>
-										<span class="text"> Reports </span>
+										<i class="fa fa-users"></i>
+										<span class="text">Members</span>
 									</div>
 								</a>
-								<a class="col-6 col-md-4 p-0" href="{{ route('posts.create') }}">
+								<a class="col-6 col-md-4 p-0" href="{{ route('groups.index') }}">
 									<div class="quick-actions-item">
-										<i class="flaticon-pen"></i>
-										<span class="text"> Products </span>
+										<i class="fa fa-folder"></i>
+										<span class="text">Groups</span>
 									</div>
 								</a>
-								<a class="col-6 col-md-4 p-0" href="#">
+								<a class="col-6 col-md-4 p-0" href="{{ route('events.index') }}">
 									<div class="quick-actions-item">
-										<i class="flaticon-interface-1"></i>
-										<span class="text"> Users</span>
+										<i class="fa fa-calendar"></i>
+										<span class="text">Events</span>
 									</div>
 								</a>
-								<a class="col-6 col-md-4 p-0" href="#">
+								<a class="col-6 col-md-4 p-0" href="{{ route('eventAttendance.index') }}">
 									<div class="quick-actions-item">
-										<i class="flaticon-list"></i>
-										<span class="text">Completed Tasks</span>
+										<i class="fa fa-check-square"></i>
+										<span class="text">Attendance</span>
 									</div>
 								</a>
-								<a class="col-6 col-md-4 p-0" href="#">
+								<a class="col-6 col-md-4 p-0" href="{{ route('donations.index') }}">
 									<div class="quick-actions-item">
-										<i class="flaticon-file"></i>
-										<span class="text">Create New Invoice</span>
+										<i class="fa fa-heart"></i>
+										<span class="text">Giving</span>
 									</div>
 								</a>
 							</div>

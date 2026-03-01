@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $updated_at
  * 
  * @property User $user
+ * @property Group $group
  * @property Collection|EventAttendance[] $event_attendances
  *
  * @package App\Models
@@ -37,6 +38,7 @@ class Event extends Model
 	protected $casts = [
 		'event_date' => 'date',
 		'active' => 'int',
+		'group_id' => 'int',
 		'created_by' => 'int'
 	];
 
@@ -45,6 +47,7 @@ class Event extends Model
 		'description',
 		'event_date',
 		'active',
+		'group_id',
 		'created_by'
 	];
 
@@ -58,9 +61,38 @@ class Event extends Model
 		return $this->hasMany(EventAttendance::class);
 	}
 
+	public function group()
+	{
+		return $this->belongsTo(Group::class, 'fk_group');
+	}
+
+	// get members in a group but incase of 'all' get all active members
+	public function membersInGroupCount()
+	{
+		if ($this->fk_group) {
+			$group = Group::find($this->fk_group);
+			if ($group && $group->name === 'all') {
+				return Member::where('active', 1)->count();
+			} elseif ($group) {
+				return $group->members()->where('active', 1)->count();
+			}
+		}
+		return 0;
+	}
+
 	// get total attendace in this event
 	public function totalAttendance()
 	{
 		return $this->event_attendances()->count();
+	}
+
+	// percent attendance
+	public function attendancePercentage(){
+		$totalMembers = $this->membersInGroupCount();
+		if ($totalMembers > 0) {
+			// return $totalMembers;
+			return round(($this->totalAttendance() / $totalMembers) * 100, 2) . '%';
+		}
+		return '0%';
 	}
 }

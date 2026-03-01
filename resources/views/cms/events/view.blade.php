@@ -92,6 +92,7 @@
                         <table id="tb_event_attendees" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
+                                    <th>Member ID</th>
                                     <th>Member Name</th>
                                     <th>Status</th>
                                     <th>Attendance Type</th>
@@ -103,6 +104,7 @@
                             <tbody id="attendance-tbody">
                                 @forelse($event->event_attendances as $attendance)
                                 <tr id="attendance-row-{{$attendance->id}}">
+                                    <td>{{ $attendance->member->member_number ?? 'N/A' }}</td>
                                     <td>{{ $attendance->member->full_name ?? 'N/A' }}</td>
                                     <td>
                                         @if($attendance->status == 'present')
@@ -195,12 +197,9 @@
 
                         <div class="col-sm-12" id="member-select-wrap">
                             <div class="form-group form-group-default">
-                                <label for="member_id">Member</label>
-                                <select name="member_id" id="member_id" class="form-control" required>
-                                    <option value="">-- Select Member --</option>
-                                    @foreach($members as $member)
-                                    <option value="{{ $member->id }}">{{ $member->full_name }}</option>
-                                    @endforeach
+                                <label for="member_id">Member</label> 
+                                <select name="member_id" id="member_id" class="form-control select2" required>
+                                    <option value="">Select an option</option>
                                 </select>
                             </div>
                         </div>
@@ -208,7 +207,7 @@
                         <div class="col-sm-12" id="group-select-wrap" style="display:none;">
                             <div class="form-group form-group-default">
                                 <label for="group_id">Group</label>
-                                <select name="group_id" id="group_id" class="form-control">
+                                <select name="group_id" id="group_id" class="form-control select2">
                                     <option value="">-- Select Group --</option>
                                     @foreach($groups as $group)
                                     <option value="{{ $group->id }}">{{ $group->name }}</option>
@@ -318,6 +317,16 @@
 
 <script>
     $(document).ready(function() {
+        initMemberSearchSelect2('#member_id', {
+            url: "{{ route('members.search') }}",
+            dropdownParent: '#addAttendanceModal',
+            extraData: function() {
+                return {
+                    event_id: $('#addAttendanceForm input[name="event_id"]').val()
+                };
+            }
+        });
+
         $('#submitAttendanceBtn').on('click', function(e) {
             e.preventDefault();
             

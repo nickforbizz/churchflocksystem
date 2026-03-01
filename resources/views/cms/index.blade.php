@@ -1,528 +1,502 @@
 @extends('layouts.cms')
 
-@section('content')
+@section('title', 'Dashboard')
 
+@push('styles')
 <style>
-	.circles-text{
-		font-size: 18px !important;
-	}
+    .stat-card {
+        border-radius: 10px;
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .trend-up { color: #28a745; }
+    .trend-down { color: #dc3545; }
+    .birthday-item {
+        border-left: 3px solid #ffc107;
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
 </style>
+@endpush
 
-<div class="panel-header bg-primary-gradient">
-	<div class="page-inner py-5">
-		<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-			<div>
-				<h2 class="text-white pb-2 fw-bold">Dashboard</h2>
-				<h5 class="text-white op-7 mb-2">System view at a glance</h5>
-			</div>
-			<div class="ml-md-auto py-2 py-md-0">
-				<a href="#" class="btn btn-white btn-border btn-round mr-2">Manage</a>
-				<a href="#" class="btn btn-secondary btn-round">Add Customer</a>
-			</div>
-		</div>
-	</div>
+@section('content')
+@php
+    // Set defaults to prevent undefined errors
+    $stats = $stats ?? [
+        'total_members' => 0,
+        'new_members_this_month' => 0,
+        'new_members_last_month' => 0,
+        'total_groups' => 0,
+        'total_homecells' => 0,
+        'upcoming_events' => 0,
+        'total_donations_this_month' => 0,
+        'avg_attendance_rate' => 0,
+        'water_baptized_count' => 0,
+        'spirit_filled_count' => 0,
+        'gender_distribution' => [],
+        'marital_status_distribution' => [],
+    ];
+    $charts = $charts ?? [
+        'membership_growth' => [],
+        'members_by_group' => [],
+        'age_distribution' => [],
+        'join_trend' => [],
+    ];
+@endphp
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-0">Dashboard</h4>
+            <p class="text-muted">Welcome back! Here's what's happening with your church.</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats Row -->
+    <div class="row mb-4">
+        <!-- Total Members -->
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Total Members</h6>
+                            <h3 class="mb-0">{{ number_format($stats['total_members']) }}</h3>
+                            @php
+                                $growth = $stats['new_members_this_month'] - $stats['new_members_last_month'];
+                            @endphp
+                            <small class="{{ $growth >= 0 ? 'trend-up' : 'trend-down' }}">
+                                <i class="fa fa-{{ $growth >= 0 ? 'arrow-up' : 'arrow-down' }}"></i>
+                                {{ abs($growth) }} from last month
+                            </small>
+                        </div>
+                        <div class="stat-icon bg-primary bg-opacity-10">
+                            <i class="fa fa-users fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Members This Month -->
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">New This Month</h6>
+                            <h3 class="mb-0">{{ number_format($stats['new_members_this_month']) }}</h3>
+                            <small class="text-muted">Members joined</small>
+                        </div>
+                        <div class="stat-icon bg-success bg-opacity-10">
+                            <i class="fa fa-user-plus fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Groups -->
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Active Groups</h6>
+                            <h3 class="mb-0">{{ number_format($stats['total_groups']) }}</h3>
+                            <small class="text-muted">{{ $stats['total_homecells'] }} Homecells</small>
+                        </div>
+                        <div class="stat-icon bg-info bg-opacity-10">
+                            <i class="flaticon-network fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Upcoming Events</h6>
+                            <h3 class="mb-0">{{ number_format($stats['upcoming_events']) }}</h3>
+                            <small class="text-muted">{{ $stats['events_this_month'] }} this month</small>
+                        </div>
+                        <div class="stat-icon bg-warning bg-opacity-10">
+                            <i class="flaticon-calendar fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- Marital Status Chart -->
+        <div class="col-md-6  mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Marital Status</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="maritalChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gender Distribution -->
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Gender Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Charts Row -->
+    <div class="row mb-4">
+        <!-- Members by Group -->
+        <div class="col-xl-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Members by Group</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="groupChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Age Distribution -->
+        <div class="col-xl-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Age Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="ageChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Cards Row -->
+    <div class="row mb-4">
+        <!-- Spiritual Growth Stats -->
+        <div class="col-xl-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0"><i class="fa fa-heart mr-2"></i>Spiritual Growth</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Born Again</span>
+                            <span>{{ $stats['born_again_count'] }}/{{ $stats['total_members'] }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            @php $bornAgainPct = $stats['total_members'] > 0 ? ($stats['born_again_count'] / $stats['total_members']) * 100 : 0; @endphp
+                            <div class="progress-bar bg-success" style="width: {{ $bornAgainPct }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Water Baptized</span>
+                            <span>{{ $stats['water_baptized_count'] }}/{{ $stats['total_members'] }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            @php $baptizedPct = $stats['total_members'] > 0 ? ($stats['water_baptized_count'] / $stats['total_members']) * 100 : 0; @endphp
+                            <div class="progress-bar bg-info" style="width: {{ $baptizedPct }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Spirit Filled</span>
+                            <span>{{ $stats['spirit_filled_count'] }}/{{ $stats['total_members'] }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            @php $spiritPct = $stats['total_members'] > 0 ? ($stats['spirit_filled_count'] / $stats['total_members']) * 100 : 0; @endphp
+                            <div class="progress-bar bg-warning" style="width: {{ $spiritPct }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Birthdays -->
+        <div class="col-xl-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fa fa-gift mr-2"></i>Upcoming Birthdays</h6>
+                    <span class="badge bg-primary text-white" id="birthdayCount">-</span>
+                </div>
+                <div class="card-body" id="birthdayList">
+                    <div class="text-center py-3">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Members -->
+        <div class="col-xl-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0"><i class="fa fa-clock-o mr-2"></i>Recent Members</h6>
+                </div>
+                <div class="card-body" id="recentMembersList">
+                    <div class="text-center py-3">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Membership Growth Row -->
+    <div class="row mb-4">
+        <div class="col-xl-6 mb-3">
+            
+
+			<div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Membership Growth</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="membershipGrowthChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Join Trend (Last 12 Months)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="joinTrendChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="page-inner mt--5">
-	<div class="row mt--2">
-		<div class="col-md-6">
-			<div class="card full-height">
-				<div class="card-body">
-					<div class="card-title">Events Attendance</div>
-					<div class="card-category">Latest Events information about statistics in system</div>
-					<div class="d-flex flex-wrap justify-content-around pb-2 pt-4">
-						@foreach($event_attendance->take(3) as $ea)
-						<div class="px-2 pb-2 pb-md-0 text-center">
-							<div id="circles-{{ $loop->iteration }}" data-percent="{{ $ea->participation_percentage }}"></div>
-							<h6 class="mt-3 mb-0" style="font-size: small; text-transform: capitalize !important;"> {{ ucwords(strtolower($ea->title)) }} </h6>
-						</div>
-						@endforeach
-
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="card full-height">
-				<div class="card-body">
-					<div class="card-title">Numbers Spreak!</div> 
-					<div class="row py-3">
-						<div class="col-md-4 d-flex flex-column justify-content-around">
-							<div class='card p-2'>
-									<h3 class="fw-bold">{{ $event_attendance->count() }}</h3>
-									<h6 class="fw-bold text-capitalize text-success op-8"> Events</h6>
-							</div>
-							<div class='card p-2'>
-								<h3 class="fw-bold"> {{ $membership->sum('total_members') }} </h3>
-								<h6 class="fw-bold text-capitalize text-danger op-8"> Members</h6>
-							</div>
-						</div>
-						<div class="col-md-4 d-flex flex-column justify-content-aroudnd">
-							<div class='card p-2'>
-								<h3 class="fw-bold">{{ $donations_summary->count() }}</h3>
-								<h6 class="fw-bold text-capitalize text-success op-8"> Donations</h6>
-							</div>
-							<div class='card p-2'>
-								<h3 class="fw-bold">{{ $membership->count() }}</h3>
-								<h6 class="fw-bold text-capitalize text-primary op-8"> Groups</h6>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-header">
-					<div class="card-head-row">
-						<div class="card-title">Event Attendances</div>
-						<div class="card-tools">
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm mr-2">
-								<span class="btn-label">
-									<i class="fa fa-pencil"></i>
-								</span>
-								Export
-							</a>
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm">
-								<span class="btn-label">
-									<i class="fa fa-print"></i>
-								</span>
-								Print
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="card-body">
-					<canvas id="attendanceScore"></canvas>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-header">
-					<div class="card-head-row">
-						<div class="card-title">Group Membership</div>
-						<div class="card-tools">
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm mr-2">
-								<span class="btn-label">
-									<i class="fa fa-pencil"></i>
-								</span>
-								Export
-							</a>
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm">
-								<span class="btn-label">
-									<i class="fa fa-print"></i>
-								</span>
-								Print
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="card-body">
-					<canvas id="membershipChart"></canvas>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-12 mt-4">
-			<div class="card">
-				<div class="card-header">
-					<div class="card-head-row">
-						<div class="card-title">Donations Summary</div>
-						<div class="card-tools">
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm mr-2">
-								<span class="btn-label">
-									<i class="fa fa-pencil"></i>
-								</span>
-								Export
-							</a>
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm">
-								<span class="btn-label">
-									<i class="fa fa-print"></i>
-								</span>
-								Print
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="card-body">
-					<canvas id="donations_summary"></canvas>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-	<div class="row">
-		<div class="col-md-8">
-			<div class="card">
-				<div class="card-header">
-					<div class="card-head-row">
-						<div class="card-title">Member Statistics</div>
-						<div class="card-tools">
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm mr-2">
-								<span class="btn-label">
-									<i class="fa fa-pencil"></i>
-								</span>
-								Export
-							</a>
-							<a href="#" class="btn btn-info btn-border btn-round btn-sm">
-								<span class="btn-label">
-									<i class="fa fa-print"></i>
-								</span>
-								Print
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="card-body">
-					<div class="chart-container" style="min-height: 375px">
-						<canvas id="membersChart"></canvas>
-					</div>
-					<div id="myChartLegend"></div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card card-primary">
-				<div class="card-header">
-					<div class="card-title">Donations </div>
-					<div class="card-category">Total donations contributed</div>
-				</div>
-				<div class="card-body pb-0">
-					<div class="mb-4 mt-2">
-						<h1>Ksh {{ array_sum(array_map(fn($row) => $row->total_amount, $donations_summary->toArray())) }}</h1>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-	<div class="row">
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-header">
-					<div class="card-title">Top Selling Products</div>
-				</div>
-				<div class="card-body pb-0">
-					<div class="d-flex">
-						<div class="avatar">
-							<img src="../assets/img/logoproduct.svg" alt="..." class="avatar-img rounded-circle">
-						</div>
-						<div class="flex-1 pt-1 ml-2">
-							<h6 class="fw-bold mb-1">CSS</h6>
-							<small class="text-muted">Cascading Style Sheets</small>
-						</div>
-						<div class="d-flex ml-auto align-items-center">
-							<h3 class="text-info fw-bold">+$17</h3>
-						</div>
-					</div>
-					<div class="separator-dashed"></div>
-					<div class="d-flex">
-						<div class="avatar">
-							<img src="../assets/img/logoproduct.svg" alt="..." class="avatar-img rounded-circle">
-						</div>
-						<div class="flex-1 pt-1 ml-2">
-							<h6 class="fw-bold mb-1">J.CO Donuts</h6>
-							<small class="text-muted">The Best Donuts</small>
-						</div>
-						<div class="d-flex ml-auto align-items-center">
-							<h3 class="text-info fw-bold">+$300</h3>
-						</div>
-					</div>
-					<div class="separator-dashed"></div>
-					<div class="d-flex">
-						<div class="avatar">
-							<img src="../assets/img/logoproduct3.svg" alt="..." class="avatar-img rounded-circle">
-						</div>
-						<div class="flex-1 pt-1 ml-2">
-							<h6 class="fw-bold mb-1">Ready Pro</h6>
-							<small class="text-muted">Bootstrap 4 Admin Dashboard</small>
-						</div>
-						<div class="d-flex ml-auto align-items-center">
-							<h3 class="text-info fw-bold">+$350</h3>
-						</div>
-					</div>
-					<div class="separator-dashed"></div>
-					<div class="pull-in">
-						<canvas id="topProductsChart"></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-body">
-					<div class="card-title fw-mediumbold">Recent Clients</div>
-					<div class="card-list">
-						<div class="item-list">
-							<div class="avatar">
-								<img src="../assets/img/jm_denis.jpg" alt="..." class="avatar-img rounded-circle">
-							</div>
-							<div class="info-user ml-3">
-								<div class="username">Jimmy Denis</div>
-								<div class="status">Graphic Designer</div>
-							</div>
-							<button class="btn btn-icon btn-primary btn-round btn-xs">
-								<i class="fa fa-plus"></i>
-							</button>
-						</div>
-						<div class="item-list">
-							<div class="avatar">
-								<img src="../assets/img/chadengle.jpg" alt="..." class="avatar-img rounded-circle">
-							</div>
-							<div class="info-user ml-3">
-								<div class="username">Chad</div>
-								<div class="status">CEO Zeleaf</div>
-							</div>
-							<button class="btn btn-icon btn-primary btn-round btn-xs">
-								<i class="fa fa-plus"></i>
-							</button>
-						</div>
-						<div class="item-list">
-							<div class="avatar">
-								<img src="../assets/img/talha.jpg" alt="..." class="avatar-img rounded-circle">
-							</div>
-							<div class="info-user ml-3">
-								<div class="username">Talha</div>
-								<div class="status">Front End Designer</div>
-							</div>
-							<button class="btn btn-icon btn-primary btn-round btn-xs">
-								<i class="fa fa-plus"></i>
-							</button>
-						</div>
-						<div class="item-list">
-							<div class="avatar">
-								<img src="../assets/img/mlane.jpg" alt="..." class="avatar-img rounded-circle">
-							</div>
-							<div class="info-user ml-3">
-								<div class="username">John Doe</div>
-								<div class="status">Back End Developer</div>
-							</div>
-							<button class="btn btn-icon btn-primary btn-round btn-xs">
-								<i class="fa fa-plus"></i>
-							</button>
-						</div>
-						<div class="item-list">
-							<div class="avatar">
-								<img src="../assets/img/talha.jpg" alt="..." class="avatar-img rounded-circle">
-							</div>
-							<div class="info-user ml-3">
-								<div class="username">Talha</div>
-								<div class="status">Front End Designer</div>
-							</div>
-							<button class="btn btn-icon btn-primary btn-round btn-xs">
-								<i class="fa fa-plus"></i>
-							</button>
-						</div>
-						<div class="item-list">
-							<div class="avatar">
-								<img src="../assets/img/jm_denis.jpg" alt="..." class="avatar-img rounded-circle">
-							</div>
-							<div class="info-user ml-3">
-								<div class="username">Jimmy Denis</div>
-								<div class="status">Graphic Designer</div>
-							</div>
-							<button class="btn btn-icon btn-primary btn-round btn-xs">
-								<i class="fa fa-plus"></i>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<div class="card full-height">
-				<div class="card-header">
-					<div class="card-title">Feed Activity</div>
-				</div>
-				<div class="card-body">
-					<ol class="activity-feed">
-						<li class="feed-item feed-item-secondary">
-							<time class="date" datetime="9-25">Sep 25</time>
-							<span class="text">Responded to need <a href="#">"Volunteer opportunity"</a></span>
-						</li>
-						<li class="feed-item feed-item-success">
-							<time class="date" datetime="9-24">Sep 24</time>
-							<span class="text">Added an interest <a href="#">"Volunteer Activities"</a></span>
-						</li>
-						<li class="feed-item feed-item-info">
-							<time class="date" datetime="9-23">Sep 23</time>
-							<span class="text">Joined the group <a href="single-group.php">"Boardsmanship Forum"</a></span>
-						</li>
-						<li class="feed-item feed-item-warning">
-							<time class="date" datetime="9-21">Sep 21</time>
-							<span class="text">Responded to need <a href="#">"In-Kind Opportunity"</a></span>
-						</li>
-						<li class="feed-item feed-item-danger">
-							<time class="date" datetime="9-18">Sep 18</time>
-							<span class="text">Created need <a href="#">"Volunteer Opportunity"</a></span>
-						</li>
-						<li class="feed-item">
-							<time class="date" datetime="9-17">Sep 17</time>
-							<span class="text">Attending the event <a href="single-event.php">"Some New Event"</a></span>
-						</li>
-					</ol>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
 @endsection
 
 @push('scripts')
-<!-- Chart JS -->
-<script src="{{ asset('assets/js/plugin/chart.js/chart.min.js') }}"></script>
-<!-- Chart Circle -->
-<script src="{{ asset('assets/js/plugin/chart-circle/circles.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-	/**
-	 * Labels: Event titles
-	 */
-	const labelsScore = {!!json_encode($attendance->pluck('event_title')) !!};
+document.addEventListener('DOMContentLoaded', function() {
+    // Chart Data from Laravel
+    const chartsData = @json($charts ?? []);
+    const statsData = @json($stats ?? []);
 
-	const labelsGrpMember = {!!json_encode($membership->pluck('group_name')) !!};
+    console.log('Charts Data:', chartsData);
+    console.log('Stats Data:', statsData);
 
+    // Membership Growth Chart
+    if (chartsData.membership_growth && chartsData.membership_growth.length > 0) {
+        new Chart(document.getElementById('membershipGrowthChart'), {
+            type: 'line',
+            data: {
+                labels: chartsData.membership_growth.map(d => d.month),
+                datasets: [{
+                    label: 'Total Members',
+                    data: chartsData.membership_growth.map(d => d.count),
+                    borderColor: '#4472C4',
+                    backgroundColor: 'rgba(68, 114, 196, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 
-	const scores = {!!json_encode($attendance->map(function($r) {
-				return $r->total_atendees > 0 ?
-					round(($r->total_present / $r->total_atendees) * 100, 1) :
-					0;
-			})) !!};
+    // Gender Distribution Chart
+    if (statsData.gender_distribution && Object.keys(statsData.gender_distribution).length > 0) {
+        new Chart(document.getElementById('genderChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(statsData.gender_distribution),
+                datasets: [{
+                    data: Object.values(statsData.gender_distribution),
+                    backgroundColor: ['#4472C4', '#ED7D31', '#A5A5A5']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
 
+    // Members by Group Chart
+    if (chartsData.members_by_group && chartsData.members_by_group.length > 0) {
+        new Chart(document.getElementById('groupChart'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.members_by_group.map(d => d.name),
+                datasets: [{
+                    label: 'Members',
+                    data: chartsData.members_by_group.map(d => d.members_count),
+                    backgroundColor: '#4472C4'
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true }
+                }
+            }
+        });
+    }
 
-	const memberScores = {!!json_encode($membership->map(function($r) {
-		return $r->total_members > 0 ?
-			round(($r->active_members / $r->total_members) * 100, 1) : 0;
-	})) !!};
+    // Age Distribution Chart
+    if (chartsData.age_distribution && Object.keys(chartsData.age_distribution).length > 0) {
+        new Chart(document.getElementById('ageChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(chartsData.age_distribution),
+                datasets: [{
+                    label: 'Members',
+                    data: Object.values(chartsData.age_distribution),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 
+    // Marital Status Chart
+    if (statsData.marital_status_distribution && Object.keys(statsData.marital_status_distribution).length > 0) {
+        new Chart(document.getElementById('maritalChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(statsData.marital_status_distribution),
+                datasets: [{
+                    data: Object.values(statsData.marital_status_distribution),
+                    backgroundColor: ['#4472C4', '#ED7D31', '#FFC000', '#70AD47', '#5B9BD5']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+    }
 
-	drawDoughnutChart('attendanceScore', labelsScore, scores, 'Attendance Score');
-	drawDoughnutChart('membershipChart', labelsGrpMember, memberScores, 'Group Membership Score');
+    // Join Trend Chart
+    if (chartsData.join_trend && chartsData.join_trend.length > 0) {
+        new Chart(document.getElementById('joinTrendChart'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.join_trend.map(d => d.month),
+                datasets: [{
+                    label: 'New Members',
+                    data: chartsData.join_trend.map(d => d.count),
+                    backgroundColor: '#70AD47'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 
+    // Load Birthdays
+    fetch('{{ route("dashboard.widget", "birthdays") }}')
+        .then(response => response.json())
+        .then(data => {
+			console.log(data);
+			
+            const container = document.getElementById('birthdayList');
+            document.getElementById('birthdayCount').textContent = data.length;
+            
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center mb-0">No birthdays this week</p>';
+                return;
+            }
 
-	function drawDoughnutChart(elementId, labels, scores, title='Attendance Score') {
+            container.innerHTML = data.map(b => `
+                <div class="birthday-item">
+                    <strong>${b.name}</strong>
+                    <div class="small text-muted">
+                        ${b.date} (turning ${b.age})
+                        ${b.days_until === 0 ? '<span class="badge bg-success text-white ms-1">Today!</span>' : 
+                          b.days_until === 1 ? '<span class="badge bg-warning text-white ms-1">Tomorrow</span>' : 
+                          `<span class="text-muted">in ${b.days_until} days</span>`}
+                    </div>
+                </div>
+            `).join('');
+        });
 
-		new Chart(document.getElementById(elementId), {
-			title,
-			type: 'doughnut',
-			data: {
-				labels: labels,
-				datasets: [{
-					label: 'Attendance (%)',
-					data: scores
-				}]
-			},
-			options: {
-				indexAxis: 'y',
-				scales: {
-					x: {
-						max: 100,
-						beginAtZero: true
-					}
-				}
-			}
-		});
-	}
-</script>
+    // Load Recent Members
+    fetch('{{ route("dashboard.widget", "recent_members") }}')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('recentMembersList');
+            
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center mb-0">No recent members</p>';
+                return;
+            }
 
-
-<script>
-	const dateLabels = {!! json_encode( $donations_summary->pluck('donation_date')->unique()->values()) !!};
-	const dateTotals = {!! json_encode($donations_summary->groupBy('donation_date')->map(fn($rows) => $rows->sum('total_amount'))->values()) !!};
-	const donationData  = {
-		labels: dateLabels,
-		datasets: [
-			{ label: 'Total Donations', data: dateTotals }
-		]
-	};
-	drawBarChart('donations_summary', donationData);
-	
-	const membersLabels = {!! json_encode( $membership->pluck('group_name')) !!};
-	const totalMembersData = {!! json_encode($membership->pluck('total_members')->map(fn($v) => $v ?? 0)) !!};
-	const activeMembersData = {!! json_encode($membership->pluck('active_members')->map(fn($v) => $v ?? 0)) !!};
-	const memberData  = {
-		labels: membersLabels,
-		datasets: [
-			{ label: 'Total Members', data: totalMembersData },
-			{ label: 'Active Members', data: activeMembersData }
-		]
-	};
-	drawBarChart('membersChart', memberData);
-	function drawBarChart(elementId, data) {
-		new Chart(document.getElementById(elementId).getContext('2d'), {
-			type: 'bar',
-			data,
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				legend: {
-					display: false,
-				},
-				scales: {
-					yAxes: [{
-						ticks: {
-							display: false //this will remove only the label
-						},
-						gridLines: {
-							drawBorder: false,
-							display: false
-						}
-					}],
-					xAxes: [{
-						gridLines: {
-							drawBorder: false,
-							display: false
-						}
-					}]
-				},
-			}
-		});
-	}
-</script>
-
-
-<script>
-	let circleevent1 = document.getElementById('circles-1');
-	let circleevent2 = document.getElementById('circles-2');
-	let circleevent3 = document.getElementById('circles-3');
-
-	let percent1 = circleevent1.getAttribute('data-percent');
-	let percent2 = circleevent2.getAttribute('data-percent');
-	let percent3 = circleevent3.getAttribute('data-percent');
-
-	drawCirclePercentage('circles-1', percent1, '#FF9E27');
-	drawCirclePercentage('circles-2', percent2, '#2BB930');
-	drawCirclePercentage('circles-3', percent3, '#F25961');
-	function drawCirclePercentage(elementId, percent, myColor='') {
-		Circles.create({
-			id: elementId,
-			radius: 45,
-			value: percent,
-			maxValue: 100,
-			width: 7,
-			text: parseInt(percent)+'%',
-			colors: ['#f1f1f1', myColor || '#2BB930'],
-			duration: 400,
-			wrpClass: 'circles-wrp',
-			textClass: 'circles-text',
-			styleWrapper: true,
-			styleText: true
-		})
-	}
-
-
+            container.innerHTML = data.map(m => `
+                <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                    <div>
+                        <strong>${m.name}</strong>
+                        <div class="small text-muted"> -- s${m.email}</div>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-info text-white">#${m.member_number}</span>
+                        <div class="small text-muted">${m.joined}</div>
+                    </div>
+                </div>
+            `).join('');
+        });
+});
 </script>
 @endpush

@@ -79,7 +79,7 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="member_number" class="text-danger" > Member Number
+                                    <label for="member_number" class="text-danger"> Member Number
                                         <a href="#" tabindex="0" class="ml-2" role="button" data-toggle="popover" data-trigger="focus" title="Member Numbers" data-html="true" data-content="Next: {{ $nextMemberNumber ?? 'N/A' }}<br>Skipped: {{ !empty($skipped_member_numbers) ? implode(', ', $skipped_member_numbers) : 'None' }}">
                                             <i class="fa fa-info-circle"></i>
                                         </a>
@@ -123,9 +123,9 @@
                                 <div class="form-group">
                                     <label for="gender"> Gender </label>
                                     <select name="gender" id="gender" class="form-control shadow @error('gender') is-invalid @enderror">
-                                        <option value="male" {{ old('gender', $member->gender ?? '') == 'male' ? 'selected' : '' }}>Male</option>
-                                        <option value="female" {{ old('gender', $member->gender ?? '') == 'female' ? 'selected' : '' }}>Female</option>
-                                        <option value="other" {{ old('gender', $member->gender ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                        @foreach(App\Models\Valuelist::getDropdownLower('gender') as $key => $value)
+                                        <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
                                     </select>
                                     @error('gender') <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -136,9 +136,9 @@
                                 <div class="form-group">
                                     <label for="marital_status"> Marital Status </label>
                                     <select name="marital_status" id="marital_status" class="form-control shadow @error('marital_status') is-invalid @enderror">
-                                        <option value="single" {{ old('marital_status', $member->marital_status ?? '') == 'single' ? 'selected' : '' }}>Single</option>
-                                        <option value="married" {{ old('marital_status', $member->marital_status ?? '') == 'married' ? 'selected' : '' }}>Married</option>
-                                        <option value="other" {{ old('marital_status', $member->marital_status ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                        @foreach(App\Models\Valuelist::getDropdownLower('marital_status') as $key => $value)
+                                        <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
                                     </select>
                                     @error('marital_status') <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -226,8 +226,9 @@
                                 <div class="form-group">
                                     <label for="born_again"> Born Again </label>
                                     <select name="born_again" id="born_again" class="form-control shadow @error('born_again') is-invalid @enderror">
-                                        <option value="1" {{ old('born_again', $member->born_again ?? '') == '1' ? 'selected' : '' }}>Yes</option>
-                                        <option value="0" {{ old('born_again', $member->born_again ?? '') == '0' ? 'selected' : '' }}>No</option>
+                                        @foreach(App\Models\Valuelist::getDropdownLower('yesno', true) as $key => $value)
+                                        <option value="{{ $key }}" {{ old('born_again', $member->born_again ?? '') == $key ? 'selected' : '' }}>{{ $value }}</option>
+                                        @endforeach
                                     </select>
                                     @error('born_again') <span class="text-danger">{{ $message }}</span>
                                     @enderror

@@ -69,21 +69,7 @@
 
 
                         <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="member_id">Member</label>
-                                    <select name="member_id" id="member_id" class="form-control @error('member_id') is-invalid @enderror">
-                                        <option value="">-- Select Member --</option>
-                                        @forelse($members as $member)
-                                        <option value="{{ $member->id }}" {{ old('member_id', $eventAttendance->member_id ?? '') == $member->id ? 'selected' : '' }}> {{ $member->full_name }} </option>
-                                        @empty
-                                        <option disabled> -- No groups available -- </option>
-                                        @endforelse
-                                    </select>
-                                    @error('member_id') <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
+                            
 
                             <div class="col-sm-6">
                                 <div class="form-group">
@@ -100,6 +86,25 @@
                                     @enderror
                                 </div>
                             </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="member_id">Member</label>
+                                    <select name="member_id" id="member_id" class="form-control @error('member_id') is-invalid @enderror" required>
+                                        <option value="">Select an option</option>
+                                        @php
+                                            $selectedMemberId = old('member_id', $eventAttendance->member_id ?? '');
+                                            $selectedMember = $selectedMemberId ? $members->firstWhere('id', (int) $selectedMemberId) : null;
+                                        @endphp
+                                        @if($selectedMember)
+                                            <option value="{{ $selectedMember->id }}" selected>{{ $selectedMember->full_name }}</option>
+                                        @endif
+                                    </select>
+                                    @error('member_id') <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
                         </div>
 
 
@@ -191,7 +196,18 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
+        initMemberSearchSelect2('#member_id', {
+            url: "{{ route('members.search') }}",
+            extraData: function() {
+                return {
+                    event_id: $('#event_id').val()
+                };
+            }
+        });
 
+        $('#event_id').on('change', function() {
+            $('#member_id').val(null).trigger('change');
+        });
     });
 </script>
 

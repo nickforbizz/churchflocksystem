@@ -33,10 +33,10 @@
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">List of Available Record(s)</h4>
                         @can('create event_attendance')
-                        <a href="{{ route('eventAttendance.create') }}" class="btn btn-primary btn-round ml-auto" >
+                        <!-- <a href="{{ route('eventAttendance.create') }}" class="btn btn-primary btn-round ml-auto" >
                             <i class="flaticon-add mr-2"></i>
                             Add Row
-                        </a> 
+                        </a>  -->
                         @endcan
                     </div>
                 </div>

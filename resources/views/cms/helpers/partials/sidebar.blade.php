@@ -134,7 +134,7 @@
 				
 
 				<li class="nav-item @if(Route::is('reports.*')) active @endif">
-					<a href="{{ route('reports.index') }}">
+					<a href="{{ route('report-center.index') }}">
 						<i class="icon-pie-chart"></i>
 						<p> Reports</p>
 					</a>
@@ -184,7 +184,7 @@
 							</li>
 
 							<li>
-								<a href="#">
+								<a href="{{ route('params.index') }}">
 									<span class="sub-item">Params</span>
 								</a>
 							</li>
