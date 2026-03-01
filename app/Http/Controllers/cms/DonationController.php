@@ -26,10 +26,13 @@ class DonationController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('member_id', function ($row) {
-                    return '<a href="' . route('members.show', $row->member->id) . '" class="btn-link">' . ($row->member->full_name ?? 'N/A') . '</a>';
+                    if (!$row->member) {
+                        return 'N/A';
+                    }
+                    return '<a href="' . route('members.show', $row->member->id) . '" class="btn-link">' . e($row->member->full_name ?? 'N/A') . '</a>';
                 })
                 ->editColumn('created_by', function ($row) {
-                    return $row->user->name ?? 'N/A';
+                    return e($row->user->name ?? 'N/A');
                 })
                 ->editColumn('date', function ($row) {
                     if (is_null($row->date)) {
@@ -66,7 +69,7 @@ class DonationController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action','member_id', 'created_by', 'date', 'created_at'])
+                ->rawColumns(['action', 'member_id', 'date', 'created_at'])
                 ->make(true);
         }
 

@@ -35,7 +35,7 @@ class ChurchEventRequest extends FormRequest
             'event_date' => 'required',
             'active' => 'boolean',
             'created_by' => 'required|exists:users,id',
-            'fk_group' => 'nullable|exists:groups,id',
+            'group_id' => 'nullable|exists:groups,id',
         ];
     }
 

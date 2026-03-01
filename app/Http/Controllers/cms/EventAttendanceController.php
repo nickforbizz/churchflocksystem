@@ -45,13 +45,13 @@ class EventAttendanceController extends Controller
                     if (is_null($row->member)) {
                         return 'N/A';
                     }
-                    return '<a href="' . route('members.show', $row->member->id) . '">' . $row->member->full_name . '</a>';
+                    return '<a href="' . route('members.show', $row->member->id) . '">' . e($row->member->full_name) . '</a>';
                 })
                 ->editColumn('event_id', function ($row) {
                     if (is_null($row->event)) {
                         return 'N/A';
                     }
-                    return '<a href="' . route('events.show', $row->event->id) . '">' . $row->event->title . '</a>';
+                    return '<a href="' . route('events.show', $row->event->id) . '">' . e($row->event->title) . '</a>';
                 })
                 ->editColumn('status', function ($row) {
                     $status = $row->status ?? 'N/A';

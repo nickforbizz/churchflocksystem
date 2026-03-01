@@ -21,7 +21,7 @@ class GroupController extends Controller
     {
         // return datatable of the makes available
         $data = Cache::remember('Group_all', 60, function () {
-            return Group::orderBy('created_at', 'desc')->get();
+            return Group::withCount('members')->orderBy('created_at', 'desc')->get();
         });
         if ($request->ajax()) {
             return Datatables::of($data)
@@ -31,18 +31,18 @@ class GroupController extends Controller
                 })
                 ->editColumn('name', function ($row) {
                     // return name with a red badge showing the count of members in the group, if group is all, show total active members count
-                    if ($row->name == 'All') {
+                    if (strtolower($row->name) === 'all') {
                         $membersCount = Cache::remember('active_members_count', 60, function () {
                             return \App\Models\Member::where('active', 1)->count();
                         });
                     } else {
-                        $membersCount = $row->members()->count();
+                        $membersCount = $row->members_count ?? 0;
                     }
                     $badge = '<span class="badge badge-sm badge-pill badge-danger ml-2 notification" style="font-size: 0.75rem; padding: .25em .4em;">' . $membersCount . '</span>';
-                    return ($row->name ?? 'N/A') . ' ' . $badge;
+                    return e($row->name ?? 'N/A') . ' ' . $badge;
                 })
                 ->editColumn('created_by', function ($row) {
-                    return $row->user->name ?? 'N/A';
+                    return e($row->user->name ?? 'N/A');
                 })
                 ->addColumn('action', function ($row) {
                     $btn_edit = $btn_del = null;
@@ -67,7 +67,7 @@ class GroupController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action', 'created_by', 'name', 'created_at'])
+                ->rawColumns(['action', 'name', 'created_at'])
                 ->make(true);
         }
 
@@ -177,7 +177,7 @@ class GroupController extends Controller
     {
         $groups = Cache::remember('Groups_list', 60, function () {
             return Group::where('active', 1)
-                ->where('name', '!=', 'All')
+                ->whereRaw('LOWER(name) != ?', ['all'])
                 ->has('members')
                 ->orderBy('name', 'asc')
                 ->get(['id', 'name']);

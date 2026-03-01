@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\cms;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ParamRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
-
 
 use App\Models\Param;
 
@@ -26,7 +25,7 @@ class ParamController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_by', function ($row) {
-                    return $row->user->name ?? 'N/A';
+                    return e($row->user->name ?? 'N/A');
                 })
                 ->editColumn('created_at', function ($row) {
                     if (is_null($row->created_at)) {
@@ -57,7 +56,7 @@ class ParamController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action','created_by', 'created_at'])
+                ->rawColumns(['action', 'created_at'])
                 ->make(true);
         }
 
@@ -74,16 +73,8 @@ class ParamController extends Controller
         if ((!auth()->user()->hasAnyRole(['admin', 'superadmin']) || !auth()->user()->hasPermissionTo('create param'))) {
             return redirect()->route('params.index')->with('error', 'You do not have permission to create params.');
         }
-
-        $members = Cache::remember('Member_all', 60, function () {
-            return Member::where('active', 1)->get();
-        });
-
-        if ($members->isEmpty()) {
-            return redirect()->back()->with('error', 'No active members found. Please create a member first.');
-        }
         
-        return view('cms.params.create', compact('members'));
+        return view('cms.params.create');
     }
 
     /**
@@ -98,6 +89,8 @@ class ParamController extends Controller
         if (!Param::create($request->validated())) {
             return redirect()->back()->with('error', 'Failed to create record. Please try again.');
         }
+
+        Cache::forget('Param_all');
 
         return redirect()->back()->with('success', 'Record Created Successfully');
     }
@@ -120,16 +113,7 @@ class ParamController extends Controller
             return redirect()->route('params.index')->with('error', 'You do not have permission to update params.');
         }
 
-
-        $params = Cache::remember('Param_all', 60, function () {
-            return Param::where('active', 1)->get();
-        });
-
-        if ($params->isEmpty()) {
-            return redirect()->back()->with('error', 'No active params found. Please create a param first.');
-        }
-
-        return view('cms.params.edit', compact('param', 'params'));
+        return view('cms.params.edit', compact('param'));
     }
 
     /**
@@ -145,6 +129,8 @@ class ParamController extends Controller
         if (!$param->update($request->validated())) {
             return redirect()->back()->with('error', 'Failed to update record. Please try again.');
         }
+
+        Cache::forget('Param_all');
 
         // Redirect the user to the user's profile page
         return redirect()
@@ -165,6 +151,7 @@ class ParamController extends Controller
             ], 403, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
         }
         if ($param->delete()) {
+            Cache::forget('Param_all');
             return response()->json([
                 'code' => 1,
                 'msg' => 'Record deleted successfully'
