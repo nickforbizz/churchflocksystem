@@ -2,28 +2,57 @@
 
 namespace App\Exports;
 
+use App\DTOs\ReportFilterDTO;
 use App\Models\Group;
 use App\Models\Member;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class GroupExport implements FromQuery, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+/**
+ * Export groups to Excel with member counts.
+ * Extends BaseExport for consistent styling.
+ */
+class GroupExport extends BaseExport implements FromQuery, WithHeadings, WithMapping
 {
+    protected ReportFilterDTO $filters;
     private int $rowNumber = 0;
+
+    public function __construct(ReportFilterDTO|null $filters = null)
+    {
+        $this->filters = $filters ?? ReportFilterDTO::make();
+    }
+
+    public function title(): string
+    {
+        return 'Groups';
+    }
+
+    protected function getFilterDescription(): string
+    {
+        return $this->filters->getDescription();
+    }
+
+    protected function getLastColumn(): string
+    {
+        return 'F'; // 6 columns
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query()
     {
-        return Group::query()
+        $query = Group::query()
             ->with(['user', 'members'])
             ->withCount('members')
             ->orderBy('name', 'asc');
+
+        if ($this->filters->activeOnly) {
+            $query->where('active', 1);
+        }
+
+        return $query;
     }
 
     /**
@@ -39,7 +68,7 @@ class GroupExport implements FromQuery, WithHeadings, WithMapping, WithStyles, S
             'Created By',
             'Created At',
         ];
-    }
+    } 
 
     /**
      * @param Group $group
@@ -61,26 +90,9 @@ class GroupExport implements FromQuery, WithHeadings, WithMapping, WithStyles, S
             $this->rowNumber,
             $group->name,
             $membersCount,
-            $group->active ? 'Active' : 'Inactive',
-            $group->user->name ?? 'N/A',
-            $group->created_at ? $group->created_at->format('Y-m-d H:i:s') : '',
-        ];
-    }
-
-    /**
-     * @param Worksheet $sheet
-     * @return array
-     */
-    public function styles(Worksheet $sheet): array
-    {
-        return [
-            1 => [
-                'font' => ['bold' => true],
-                'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FFE0E0E0'],
-                ],
-            ],
+            $this->formatBoolean($group->active, 'Active', 'Inactive'),
+            $this->getRelationValue($group, 'user', 'name'),
+            $this->formatDate($group->created_at, 'Y-m-d H:i:s'),
         ];
     }
 }

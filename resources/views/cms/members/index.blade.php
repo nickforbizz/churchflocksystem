@@ -142,7 +142,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="exportMembersForm" action="{{ route('members.export') }}" method="GET">
+            <form id="exportMembersForm" action="{{ route('members.export') }}" target="_blank" method="GET">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="export_filter">Export Filter</label>

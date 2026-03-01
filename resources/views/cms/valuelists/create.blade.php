@@ -135,7 +135,6 @@
 <script>
     $(document).ready(function() {
         var isEditMode = {{ isset($valuelist) ? 'true' : 'false' }};
-        var existingTypes = @json($types);
         
         // Initialize Select2 with tagging and AJAX search
         $('#type').select2({
@@ -180,32 +179,19 @@
                 return;
             }
 
-            // Check if this is a new tag (not in existing types from DB)
-            var selectedData = $(this).select2('data')[0];
-            var isNewType = selectedData && selectedData.newTag;
-            
-            // Also check if type doesn't exist in any loaded options
-            if (!isNewType && existingTypes.indexOf(selectedType) === -1) {
-                isNewType = true;
-            }
-            
-            if (isNewType) {
-                // New type, set index to 1
-                $('#index').val(1);
-            } else {
-                // Existing type, get next index via AJAX
-                $.ajax({
-                    url: '{{ route("valuelists.types.nextIndex") }}',
-                    type: 'GET',
-                    data: { type: selectedType },
-                    success: function(response) {
-                        $('#index').val(response.nextIndex);
-                    },
-                    error: function() {
-                        $('#index').val(1);
-                    }
-                });
-            }
+            // Always use AJAX to get next index - it queries full DB
+            // Returns 1 for new types, max+1 for existing types
+            $.ajax({
+                url: '{{ route("valuelists.types.nextIndex") }}',
+                type: 'GET',
+                data: { type: selectedType },
+                success: function(response) {
+                    $('#index').val(response.nextIndex);
+                },
+                error: function() {
+                    $('#index').val(1);
+                }
+            });
         });
 
         // For create mode: trigger change if type has old value to calculate index

@@ -46,14 +46,24 @@ class Ministry extends Model
 		return $this->belongsTo(User::class, 'created_by');
 	}
 
+	/**
+	 * Get members via the pivot table.
+	 */
 	public function members()
 	{
-		return $this->hasMany(Member::class);
+		return $this->belongsToMany(
+			Member::class,
+			'member_has_ministries',
+			'ministry_id',
+			'member_id'
+		);
 	}
 
-	// get members count in this member_has_ministries table
-	public function membersCount()
+	/**
+	 * Get member_has_ministries records.
+	 */
+	public function memberHasMinistries()
 	{
-		return $this->hasMany(MemberHasMinistry::class, 'ministry_id')->count();
+		return $this->hasMany(MemberHasMinistry::class, 'ministry_id');
 	}
 }

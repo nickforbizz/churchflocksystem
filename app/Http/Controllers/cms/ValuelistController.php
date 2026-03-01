@@ -141,6 +141,13 @@ class ValuelistController extends Controller
             return redirect()->back()->with('error', 'Failed to create record. Please try again.');
         }
 
+        // clear cache for this type to ensure new value shows up immediately
+        Valuelist::clearCache($request->type);
+
+        // for dashboard_stats
+        Cache::forget('dashboard_stats');
+        Cache::forget('dashboard_charts');
+
         return redirect()->back()->with('success', 'Record Created Successfully');
     }
 
@@ -186,6 +193,13 @@ class ValuelistController extends Controller
         if (!$valuelist->update($request->validated())) {
             return redirect()->back()->with('error', 'Failed to update record. Please try again.');
         }
+
+        // clear cache for this type to ensure updated value shows up immediately
+        Valuelist::clearCache($valuelist->type);
+
+        // for dashboard_stats
+        Cache::forget('dashboard_stats');
+        Cache::forget('dashboard_charts');
 
         // Redirect the user to the user's profile page
         return redirect()

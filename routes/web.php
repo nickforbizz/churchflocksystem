@@ -17,6 +17,7 @@ use App\Http\Controllers\cms\PostCategoryController;
 use App\Http\Controllers\cms\PostController;
 use App\Http\Controllers\cms\ProductCategoryController;
 use App\Http\Controllers\cms\ReportController;
+use App\Http\Controllers\cms\ReportCenterController;
 use App\Http\Controllers\cms\RoleController;
 use App\Http\Controllers\cms\SearchController;
 use App\Http\Controllers\cms\ValuelistController;
@@ -91,12 +92,22 @@ Route::middleware('cms')->group(function () {
 
     Route::get('/home', [HomeController::class, 'cms'])->name('home');
     Route::get('/cms', [HomeController::class, 'cms'])->name('cms');
+    Route::get('/dashboard/widget/{widget}', [HomeController::class, 'getWidgetData'])->name('dashboard.widget');
     Route::get('/search', [SearchController::class, 'search'])->name('search');
     Route::get('/send-whatsapp', [WhatsAppController::class, 'sendWhatsappMessage'])->name('send.whatsapp');
 
 
     // Downloadable Reports
     Route::get('reports/download/csv', [ReportController::class, 'downloadCsv'])->name('reports.download.csv');
+
+    // Report Center - Unified Reporting Interface
+    Route::prefix('report-center')->name('report-center.')->group(function () {
+        Route::get('/', [ReportCenterController::class, 'index'])->name('index');
+        Route::get('/export', [ReportCenterController::class, 'export'])->name('export');
+        Route::get('/chart-data', [ReportCenterController::class, 'getChartData'])->name('chart-data');
+        Route::get('/filter-options', [ReportCenterController::class, 'getFilterOptionsAjax'])->name('filter-options');
+        Route::get('/dashboard-summary', [ReportCenterController::class, 'getDashboardSummary'])->name('dashboard-summary');
+    });
 
     Route::get('/calendar', [ChurchEventController::class, 'showCalendar'])->name('calendar');
     Route::get('/calendar/events', [ChurchEventController::class, 'calendarEvents'])->name('calendar.events');

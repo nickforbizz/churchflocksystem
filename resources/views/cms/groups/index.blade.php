@@ -40,7 +40,7 @@
                             </a> 
                             @endcan
                             @hasanyrole('admin|superadmin')
-                            <a href="{{ route('groups.export') }}" class="btn btn-sm btn-success btn-round">
+                            <a href="{{ route('groups.export') }}" target="_blank" class="btn btn-sm btn-success btn-round">
                                 <i class="fa fa-download mr-2"></i>
                                 Export to Excel
                             </a>

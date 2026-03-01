@@ -132,9 +132,7 @@
         /**
      * Labels: Event titles
      */
-    const labelsScore = {!! json_encode(
-        $attendance->pluck('event_title')
-    ) !!};
+    const labelsScore = {!! json_encode($attendance->pluck('event_title')) !!};
 
 
     const scores = {!! json_encode(
@@ -190,7 +188,7 @@
         //     responsive: true,
         //     scales: {
         //         x: { stacked: true },
-        //         y: { stacked: true, beginAtZero: true }
+        //         y: { stacked: true, beginAtZero: true } 
         //     }
         // },
         

@@ -52,6 +52,7 @@
 </head>
 
 <body>
+	
 	<div class="wrapper">
 		<div class="main-header">
 			<!-- Logo Header -->
@@ -92,29 +93,17 @@
 		@include('cms.helpers.partials.sidebar')
 		<!-- End Sidebar -->
 
-		<div class="main-panel">
+		<div class="main-panel" id="contentHolder">
 			<div class="content">
-
-
 				@yield('content')
-
-
-
-
 			</div>
 			<!-- .content -->
-
-
-
 
 			<!-- Footer -->
 			@include('cms.helpers.partials.footer')
 			<!-- Footer END -->
-
 		</div>
 		<!-- .main-panel -->
-
-
 	</div>
 	<!-- .wrapper -->
 
@@ -164,6 +153,28 @@
 
 
 	<script>
+
+		
+$(window).on('beforeunload', function(){
+    $(".sidebar").fadeTo("slow",0.2);
+    $("#modal").modal("hide");
+	$("#contentHolder").html(`<div class='d-flex justify-content-center align-items-center' style='height: 100vh'> 
+		<div class='text-center'> 
+			<h1>{{ env('APP_NAME') }}</h1> 
+			<h3>Loading ...</h3> 
+		</div>
+	</div>`)
+    $("#contentHolder").append(`
+        <div class="text-center my_loader">
+            <div class="loadingio-spinner-spinner-fpufj1c8num  ">
+                <div class="ldio-0hf3ht1mqwp">
+                    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                </div>
+            </div>
+
+        </div>
+    `);
+});
 		$(document).ready(function() {
 
 			// Disable submit btn when submitting form
@@ -342,6 +353,8 @@
 				});
 			});
 		}
+
+	
 	</script>
 
 	@stack('scripts')
