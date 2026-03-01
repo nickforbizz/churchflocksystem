@@ -100,7 +100,7 @@
                     data: 'event_date'
                 },
                 {
-                    data: 'fk_group',
+                    data: 'group_id',
                 },
                 {
                     data: 'Attending'

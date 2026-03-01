@@ -47,6 +47,7 @@ class Event extends Model
 		'description',
 		'event_date',
 		'active',
+		'location',
 		'group_id',
 		'created_by'
 	];
@@ -63,15 +64,15 @@ class Event extends Model
 
 	public function group()
 	{
-		return $this->belongsTo(Group::class, 'fk_group');
+		return $this->belongsTo(Group::class, 'group_id');
 	}
 
 	// get members in a group but incase of 'all' get all active members
 	public function membersInGroupCount()
 	{
-		if ($this->fk_group) {
-			$group = Group::find($this->fk_group);
-			if ($group && $group->name === 'all') {
+		if ($this->group_id) {
+			$group = Group::find($this->group_id);
+			if ($group && strtolower($group->name) === 'all') {
 				return Member::where('active', 1)->count();
 			} elseif ($group) {
 				return $group->members()->where('active', 1)->count();

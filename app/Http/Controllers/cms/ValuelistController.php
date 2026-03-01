@@ -26,7 +26,7 @@ class ValuelistController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_by', function ($row) {
-                    return $row->user->name ?? 'N/A';
+                    return e($row->user->name ?? 'N/A');
                 })
                 ->editColumn('created_at', function ($row) {
                     if (is_null($row->created_at)) {
@@ -57,7 +57,7 @@ class ValuelistController extends Controller
                     }
                     return $btn_edit . $btn_del;
                 })
-                ->rawColumns(['action','created_by', 'created_at'])
+                ->rawColumns(['action', 'created_at'])
                 ->make(true);
         }
 
@@ -144,6 +144,9 @@ class ValuelistController extends Controller
         // clear cache for this type to ensure new value shows up immediately
         Valuelist::clearCache($request->type);
 
+        // also invalidate the full Valuelist_all cache
+        Cache::forget('Valuelist_all');
+
         // for dashboard_stats
         Cache::forget('dashboard_stats');
         Cache::forget('dashboard_charts');
@@ -197,6 +200,9 @@ class ValuelistController extends Controller
         // clear cache for this type to ensure updated value shows up immediately
         Valuelist::clearCache($valuelist->type);
 
+        // also invalidate the full Valuelist_all cache
+        Cache::forget('Valuelist_all');
+
         // for dashboard_stats
         Cache::forget('dashboard_stats');
         Cache::forget('dashboard_charts');
@@ -220,6 +226,7 @@ class ValuelistController extends Controller
             ], 403, ['JSON_PRETTY_PRINT' => JSON_PRETTY_PRINT]);
         }
         if ($valuelist->delete()) {
+            Cache::forget('Valuelist_all');
             return response()->json([
                 'code' => 1,
                 'msg' => 'Record deleted successfully'

@@ -39,17 +39,17 @@ class ChurchEventController extends Controller
                     }
                     return date_format($row->event_date, 'Y/m/d');
                 })
-                ->editColumn('fk_group', function ($row) {
-                    return $row->group->name ?? 'N/A';
+                ->editColumn('group_id', function ($row) {
+                    return e($row->group->name ?? 'N/A');
                 })
                 ->editColumn('title', function ($row) {
                     if (is_null($row->title)) {
                         return 'N/A';
                     }
-                    return '<a href="' . route('events.show', $row->id) . '">' . $row->title . '</a>';
+                    return '<a href="' . route('events.show', $row->id) . '">' . e($row->title) . '</a>';
                 })
                 ->editColumn('created_by', function ($row) {
-                    return $row->user->name ?? 'N/A';
+                    return e($row->user->name ?? 'N/A');
                 })
                 ->addColumn('Attending', function ($row) {
                     return $row->totalAttendance();
@@ -89,7 +89,7 @@ class ChurchEventController extends Controller
 
                     return $btn_edit . $btn_view . $btn_del;
                 })
-                ->rawColumns(['action', 'Attending', 'title', 'created_by', 'event_date', 'fk_group'])
+                ->rawColumns(['action', 'Attending', 'title', 'event_date'])
                 ->make(true);
         }
 

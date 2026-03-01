@@ -63,13 +63,13 @@ class MemberController extends Controller
                     if (is_null($row->member_number)) {
                         return 'N/A';
                     }
-                    return $row->member_number;
+                    return e($row->member_number);
                 })
                 ->editColumn('full_name', function ($row) {
                     if (is_null($row->full_name)) {
                         return 'N/A';
                     }
-                    return '<a href="' . route('members.show', $row->id) . '">' . $row->full_name . '</a>';
+                    return '<a href="' . route('members.show', $row->id) . '">' . e($row->full_name) . '</a>';
                 })
                 ->editColumn('join_date', function ($row) {
                     if (is_null($row->join_date)) {
@@ -156,7 +156,7 @@ class MemberController extends Controller
         if ($term !== '') {
             $query->where(function ($q) use ($term) {
                 $q->where('full_name', 'like', '%' . $term . '%')
-                    ->orWhere('member_number', $term);
+                    ->orWhere('member_number', 'like', '%' . $term . '%');
             });
         }
 

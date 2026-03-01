@@ -368,7 +368,7 @@
                 },
             ],
             order: [
-                [6, 'desc']
+                [7, 'desc']
             ]
         });
 
@@ -467,16 +467,6 @@
                     notify.warning('Please select at least one group.');
                     return false;
                 }
-                // Update the hidden input with selected groups
-                var groupsInput = $('input[name="groups"]');
-                if (groupsInput.length === 0) {
-                    $(this).append('<input type="hidden" name="groups" value="' + selectedGroups.join(',') + '">');
-                } else {
-                    groupsInput.val(selectedGroups.join(','));
-                }
-            } else {
-                // Remove groups parameter for "all" filter
-                $('input[name="groups"]').remove();
             }
             
             // Close modal after submit

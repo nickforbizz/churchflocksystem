@@ -233,9 +233,11 @@ $(window).on('beforeunload', function(){
 
 						return {
 							results: $.map(response.data || [], function(member) {
+								var num = $('<span>').text(member.member_number).text();
+								var name = $('<span>').text(member.full_name).text();
 								return {
 									id: member.id,
-									text: `	| ${member.member_number} | - ${member.full_name} `
+									text: '| ' + num + ' | - ' + name
 								};
 							}),
 							pagination: {
@@ -250,11 +252,8 @@ $(window).on('beforeunload', function(){
 						return 'Type at least 1 character';
 					},
 					searching: function() {
-						return '<span><i class="fa fa-spinner fa-spin mr-1"></i>Searching...</span>';
+						return 'Searching...';
 					}
-				},
-				escapeMarkup: function(markup) {
-					return markup;
 				}
 			});
 		}
